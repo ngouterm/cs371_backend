@@ -3,6 +3,9 @@ package com.example.thebigmoviebackend.command;
 import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.service.DatabaseService;
+import com.example.thebigmoviebackend.service.UserService;
+import org.jline.reader.LineReader;
+import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -21,6 +24,15 @@ public class DatabaseCommands {
 
     @Autowired
     DatabaseService databaseService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    Terminal terminal;
+
+    @Autowired
+    LineReader lineReader;
 
     private final String allDatabases = "all";
 
@@ -107,5 +119,26 @@ public class DatabaseCommands {
         public ArrayList<String> getErrorNames() {
             return errorNames;
         }
+    }
+
+    @ShellMethod("Create a user")
+    public void createUser(@ShellOption(defaultValue = "NONE") String username) {
+        if (username.equals("NONE")) {
+            username = lineReader.readLine("Enter username (or q to exit): ");
+            if (username.equals("q")) {
+                return;
+            }
+        }
+        boolean createdUser = userService.createUser(username);
+        while (!createdUser) {
+            terminal.writer().println("User '" + username + "' already exists or is an invalid name.");
+            username = lineReader.readLine("Enter username (or q to exit): ");
+            if (username.equals("q")) {
+                return;
+            }
+            createdUser = userService.createUser(username);
+        }
+        terminal.writer().println("Created user '" + username + "'.");
+        terminal.flush();
     }
 }
