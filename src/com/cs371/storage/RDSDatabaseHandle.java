@@ -1,6 +1,6 @@
 package com.cs371.storage;
 
-public class RDSDatabaseConnection extends DatabaseHandle {
+class RDSDatabaseHandle extends LocalDatabaseHandle {
     @Override
     public void connect() {
 
@@ -12,7 +12,7 @@ public class RDSDatabaseConnection extends DatabaseHandle {
     }
 
     @Override
-    public void save() {
+    public void save(DataType dataType, String data) {
 
     }
 }

@@ -1,4 +1,4 @@
-package com.cs371.storage;
+package com.example.thebigmoviebackend.storage;
 
 interface StorageHandle {
     void prepare();

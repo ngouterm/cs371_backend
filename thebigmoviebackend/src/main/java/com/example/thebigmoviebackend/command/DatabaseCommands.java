@@ -50,7 +50,7 @@ public class DatabaseCommands {
         dbTableBuilder.addFullBorder(BorderStyle.fancy_light);
         message = message.concat(dbTableBuilder.build().render(shellWidth) + "\n");
 
-        ArrayList<Movie> results = databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases());
+        ArrayList<Movie> results = DatabaseManager.getMovieResults(query, externalDatabaseResolver.getExternalDatabases());
         if (!results.isEmpty()) {
             message = message.concat("We got the following results:\n");
             Object[][] resultsTable = tablify(null, databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases()));

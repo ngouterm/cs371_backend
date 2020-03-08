@@ -1,4 +1,4 @@
-package com.cs371.storage;
+package com.example.thebigmoviebackend.storage;
 
 import java.util.ArrayList;
 import java.util.List;
