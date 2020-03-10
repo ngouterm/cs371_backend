@@ -1,7 +1,10 @@
 package com.example.thebigmoviebackend.storage;
 
-interface DatabaseHandle {
-    void connect();
+import java.sql.Connection;
+import java.util.Collection;
 
-    String search(DataType dataType, String data);
+interface DatabaseHandle {
+    Connection connect();
+
+    Collection<?> search(DataType dataType, String data);
 }

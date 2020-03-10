@@ -1,21 +1,24 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.Movie;
+import com.example.thebigmoviebackend.model.User;
+
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class DatabaseManager implements StorageManager {
 
-    DatabaseManager instance = new DatabaseManager();
-    ArrayList<LocalDatabaseHandle> localDatabaseHandles = new ArrayList<LocalDatabaseHandle>();
+    private static DatabaseManager instance;
+    LocalDatabaseHandle localDatabaseHandle = new LocalDatabaseHandle();
     ArrayList<RemoteDatabaseHandle> remoteDatabaseHandles = new ArrayList<RemoteDatabaseHandle>();
 
-    private void DatabaseConnectionManager(){
+    private DatabaseManager(){
         connectDatabases();
     }
 
-    public DatabaseManager getInstance(){
+    public static DatabaseManager getInstance(){
         if(instance == null){
             instance = new DatabaseManager();
-            connectDatabases();
         }
         return instance;
     }
@@ -25,38 +28,38 @@ public class DatabaseManager implements StorageManager {
     }
 
     private void connectDatabases(){
-        for(LocalDatabaseHandle databaseHandle : localDatabaseHandles ){
-            databaseHandle.connect();
-        }
+
+        localDatabaseHandle = new RDSDatabaseHandle();
+        localDatabaseHandle.connect();
+
         for(RemoteDatabaseHandle databaseHandle : remoteDatabaseHandles){
             databaseHandle.connect();
         }
     }
 
-    @Override
-    public ArrayList<LocalDatabaseHandle> getStorageHandles() {
-        return localDatabaseHandles;
-    }
-
-    public String query(DataType dataType, DataAction dataAction, String data){
-        if(dataAction == DataAction.SAVE){
-            for(LocalDatabaseHandle localDatabaseHandle: localDatabaseHandles){
-                localDatabaseHandle.save(dataType, data);
-            }
-        }else if(dataAction == DataAction.SEARCH){
-            switch(dataType){
-                case USER:{
-                    for(LocalDatabaseHandle localDatabaseHandle: localDatabaseHandles){
-                        localDatabaseHandle.search(dataType, data);
-                    }
-                }
-                default:
-                    for(RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles){
-                        remoteDatabaseHandle.search(dataType, data);
-                    }
-            }
+    public ArrayList<Movie> search(DataType dataType, String data) {
+        ArrayList<Movie> results = new ArrayList<>();
+        results.addAll(localDatabaseHandle.search(dataType, data));
+        for(RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles){
+            results.addAll(remoteDatabaseHandle.search(dataType, data));
         }
         return null;
+    }
+
+    public User getUser(String data) {
+        return localDatabaseHandle.getUser(data);
+    }
+
+    public void save(DataType dataType, String data) {
+        localDatabaseHandle.save(dataType, data);
+    }
+
+    public void saveMovies(ArrayList<Movie> data) {
+        localDatabaseHandle.saveMovies(data);
+    }
+
+    public void saveUser(User data) {
+        localDatabaseHandle.saveUser(data);
     }
 
 
