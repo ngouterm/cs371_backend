@@ -3,10 +3,7 @@ package com.example.thebigmoviebackend.storage;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 class RDSDatabaseHandle extends LocalDatabaseHandle {
@@ -49,13 +46,32 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
     @Override
     public ArrayList<Movie> search(DataType dataType, String data) {
-        switch(dataType){
+        switch (dataType) {
             case USER:
                 break;
             case LIST:
                 break;
-            case MOVIE:
+            case MOVIE: {
+                try {
+                    Connection conn = connect();
+
+                    PreparedStatement statement = connection.prepareStatement("select * from MOVIES where title = ?");
+                    statement.setString(1, data);
+                    ResultSet resultSet = statement.executeQuery();
+                    statement.clearParameters();
+
+                    conn.close();
+
+                    while(resultSet.next()){
+                        resultSet.getString("title");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Got an exception! ");
+                    System.err.println(e.getMessage());
+                }
+
                 break;
+            }
             case ACTOR:
                 break;
         }
@@ -69,7 +85,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     @Override
     public void saveMovies(ArrayList<Movie> data) {
         Connection connection = connect();
-        for(Movie movie : data) {
+        for (Movie movie : data) {
             String query = " insert into MOVIES (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate)"
                     + " values (?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?)";
 
@@ -102,6 +118,25 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
     @Override
     public void saveUser(User data) {
+        Connection connection = connect();
+
+        String query = " insert into USERS (username, password)"
+                + " values (?, ?)";
+
+        // create the mysql insert preparedstatement
+        try {
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+//                preparedStmt.setString(1, data.g);
+//                preparedStmt.setDouble(2, movie.getVoteAverage());
+
+
+            // execute the preparedstatement
+            preparedStmt.execute();
+
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
 
     }
 }
