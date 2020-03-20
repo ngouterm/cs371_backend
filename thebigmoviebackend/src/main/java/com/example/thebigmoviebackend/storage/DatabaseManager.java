@@ -4,13 +4,12 @@ import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class DatabaseManager implements StorageManager {
 
     private static DatabaseManager instance;
     LocalDatabaseHandle localDatabaseHandle = new LocalDatabaseHandle();
-    ArrayList<RemoteDatabaseHandle> remoteDatabaseHandles = new ArrayList<RemoteDatabaseHandle>();
+    ArrayList<RemoteDatabaseHandle> remoteDatabaseHandles = new ArrayList<>();
 
     private DatabaseManager(){
         connectDatabases();
@@ -38,12 +37,11 @@ public class DatabaseManager implements StorageManager {
     }
 
     public ArrayList<Movie> search(DataType dataType, String data) {
-        ArrayList<Movie> results = new ArrayList<>();
-        results.addAll(localDatabaseHandle.search(dataType, data));
+        ArrayList<Movie> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
         for(RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles){
             results.addAll(remoteDatabaseHandle.search(dataType, data));
         }
-        return null;
+        return results;
     }
 
     public User getUser(String data) {
