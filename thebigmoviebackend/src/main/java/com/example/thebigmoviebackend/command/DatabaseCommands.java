@@ -3,7 +3,9 @@ package com.example.thebigmoviebackend.command;
 import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.service.DatabaseService;
+import com.example.thebigmoviebackend.service.ExternalDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
+import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ public class DatabaseCommands {
 
     @ShellMethod("Search for a movie, television show, or actor.")
     public String search(String query, @ShellOption(value = {"-db"}, defaultValue = allDatabases) String database) {
+
         int shellWidth = 80;
 
         String message = "You searched for '" + query + "'\n\n";
