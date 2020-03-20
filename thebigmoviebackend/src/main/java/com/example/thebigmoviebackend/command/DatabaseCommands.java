@@ -4,6 +4,7 @@ import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.service.DatabaseService;
 import com.example.thebigmoviebackend.service.ExternalDatabaseService;
+import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.jline.reader.LineReader;
@@ -24,8 +25,7 @@ import java.util.List;
 @ShellComponent
 public class DatabaseCommands {
 
-    @Autowired
-    DatabaseService databaseService;
+    DatabaseService databaseService = new InternalDatabaseService();
 
     @Autowired
     UserService userService;
@@ -44,19 +44,19 @@ public class DatabaseCommands {
         int shellWidth = 80;
 
         String message = "You searched for '" + query + "'\n\n";
-        message = message.concat("We searched the following databases:\n");
+//        message = message.concat("We searched the following databases:\n");
+//
+//        ExternalDatabaseResolver externalDatabaseResolver = parseDatabase(database);
+//        Object[][] dbTable = tablify("Databases", externalDatabaseResolver.externalDatabases);
+//        TableModel dbTableModel = new ArrayTableModel(dbTable);
+//        TableBuilder dbTableBuilder = new TableBuilder(dbTableModel);
+//        dbTableBuilder.addFullBorder(BorderStyle.fancy_light);
+//        message = message.concat(dbTableBuilder.build().render(shellWidth) + "\n");
 
-        ExternalDatabaseResolver externalDatabaseResolver = parseDatabase(database);
-        Object[][] dbTable = tablify("Databases", externalDatabaseResolver.externalDatabases);
-        TableModel dbTableModel = new ArrayTableModel(dbTable);
-        TableBuilder dbTableBuilder = new TableBuilder(dbTableModel);
-        dbTableBuilder.addFullBorder(BorderStyle.fancy_light);
-        message = message.concat(dbTableBuilder.build().render(shellWidth) + "\n");
-
-        ArrayList<Movie> results = databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases());
+        ArrayList<Movie> results = databaseService.getMovieResults(query, null);
         if (!results.isEmpty()) {
             message = message.concat("We got the following results:\n");
-            Object[][] resultsTable = tablify(null, databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases()));
+            Object[][] resultsTable = tablify(null, results);
             TableModel resultsTableModel = new ArrayTableModel(resultsTable);
             message = message.concat(resultsTableModel.getRowCount() + "\n");
             TableBuilder resultsTableBuilder = new TableBuilder(resultsTableModel);
