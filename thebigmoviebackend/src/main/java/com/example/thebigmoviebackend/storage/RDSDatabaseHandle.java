@@ -46,6 +46,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
     @Override
     public ArrayList<Movie> search(DataType dataType, String data) {
+        ArrayList<Movie> moviesToReturn = new ArrayList<>();
         switch (dataType) {
             case USER:
                 break;
@@ -60,16 +61,15 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
 
-                    conn.close();
-
-                    while(resultSet.next()){
+                    while (resultSet.next()) {
                         resultSet.getString("title");
+                        moviesToReturn.add(new Movie(resultSet.getString("title")));
                     }
+                    return moviesToReturn;
                 } catch (Exception e) {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
-
                 break;
             }
             case ACTOR:
@@ -79,6 +79,29 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     }
 
     public User getUser(String data) {
+
+        String userName = "";
+        String password;
+        try {
+            Connection conn = connect();
+
+            PreparedStatement statement = connection.prepareStatement("select * from USERS where username = ?");
+            statement.setString(1, data);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+
+            while (resultSet.next()) {
+                userName = resultSet.getString("username");
+                password = resultSet.getString("password");
+            }
+            if(!userName.equals("")){
+                return new User(userName);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
