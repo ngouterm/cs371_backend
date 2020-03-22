@@ -6,6 +6,7 @@ import com.example.thebigmoviebackend.service.DatabaseService;
 import com.example.thebigmoviebackend.service.ExternalDatabaseService;
 import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
+import com.example.thebigmoviebackend.storage.DataType;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
@@ -19,13 +20,14 @@ import org.springframework.shell.table.TableBuilder;
 import org.springframework.shell.table.TableModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 @ShellComponent
 public class DatabaseCommands {
 
-    DatabaseService databaseService = new InternalDatabaseService();
+    InternalDatabaseService databaseService = new InternalDatabaseService();
 
     @Autowired
     UserService userService;
@@ -94,7 +96,7 @@ public class DatabaseCommands {
     }
 
     public <T> Object[][] tablify(String title, List<T> list) {
-        int offset = title == null? 0 : 1;
+        int offset = title == null ? 0 : 1;
 
         Object[][] table = new Object[list.size() + offset][1];
         if (title != null) {
@@ -143,5 +145,15 @@ public class DatabaseCommands {
         }
         terminal.writer().println("Created user '" + username + "'.");
         terminal.flush();
+    }
+
+
+    @ShellMethod("Explicitly save a movie to the local database (not recommended; for debug purposes)")
+    public String save(String movieName) {
+        Movie movie = new Movie(movieName);
+        ArrayList<Movie> movies = new ArrayList<>();
+        movies.add(movie);
+        databaseService.saveMovies(movies);
+        return "Saved movie";
     }
 }

@@ -19,4 +19,8 @@ public class InternalDatabaseService implements DatabaseService {
     public ArrayList<Movie> getMovieResults(String query, ArrayList<ExternalDatabase> databasesToSearch) {
         return databaseManager.search(DataType.MOVIE, query);
     }
+
+    public void saveMovies(ArrayList<Movie> movies) {
+        databaseManager.saveMovies(movies);
+    }
 }

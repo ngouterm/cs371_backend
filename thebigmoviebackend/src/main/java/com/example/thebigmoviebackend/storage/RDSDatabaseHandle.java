@@ -94,7 +94,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 userName = resultSet.getString("username");
                 password = resultSet.getString("password");
             }
-            if(!userName.equals("")){
+            if (!userName.equals("")) {
                 return new User(userName);
             }
 
@@ -110,7 +110,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         Connection connection = connect();
         for (Movie movie : data) {
             String query = " insert into MOVIES (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate)"
-                    + " values (?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?)";
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             // create the mysql insert preparedstatement
             try {
@@ -120,14 +120,14 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 preparedStmt.setInt(3, movie.getVoteCount());
                 preparedStmt.setBoolean(4, movie.getVideo());
                 preparedStmt.setString(5, movie.getPosterPath());
-
                 preparedStmt.setInt(6, movie.getID());
                 preparedStmt.setBoolean(7, movie.getAdult());
                 preparedStmt.setString(8, movie.getBackgroundPath());
                 preparedStmt.setString(9, movie.getOriginalLanguage());
-                preparedStmt.setInt(10, 1);
-                preparedStmt.setString(11, movie.getOverview());
-                preparedStmt.setString(10, movie.getReleaseDate());
+                preparedStmt.setString(10, movie.getOriginalTitle());
+                preparedStmt.setInt(11, 1);
+                preparedStmt.setString(12, movie.getOverview());
+                preparedStmt.setString(13, movie.getReleaseDate());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
