@@ -3,9 +3,9 @@ package com.example.thebigmoviebackend.command;
 import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.service.DatabaseService;
-import com.example.thebigmoviebackend.service.ExternalDatabaseService;
+import com.example.thebigmoviebackend.service.InternalDatabaseService;
+import com.example.thebigmoviebackend.service.MixedDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
-import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,7 @@ import java.util.List;
 @ShellComponent
 public class DatabaseCommands {
 
-    @Autowired
-    DatabaseService databaseService;
+    MixedDatabaseService databaseService = new MixedDatabaseService();
 
     @Autowired
     UserService userService;
@@ -44,19 +43,11 @@ public class DatabaseCommands {
         int shellWidth = 80;
 
         String message = "You searched for '" + query + "'\n\n";
-        message = message.concat("We searched the following databases:\n");
 
-        ExternalDatabaseResolver externalDatabaseResolver = parseDatabase(database);
-        Object[][] dbTable = tablify("Databases", externalDatabaseResolver.externalDatabases);
-        TableModel dbTableModel = new ArrayTableModel(dbTable);
-        TableBuilder dbTableBuilder = new TableBuilder(dbTableModel);
-        dbTableBuilder.addFullBorder(BorderStyle.fancy_light);
-        message = message.concat(dbTableBuilder.build().render(shellWidth) + "\n");
-
-        ArrayList<Movie> results = databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases());
+        ArrayList<Movie> results = databaseService.getMovieResults(query);
         if (!results.isEmpty()) {
             message = message.concat("We got the following results:\n");
-            Object[][] resultsTable = tablify(null, databaseService.getMovieResults(query, externalDatabaseResolver.getExternalDatabases()));
+            Object[][] resultsTable = tablify(null, results);
             TableModel resultsTableModel = new ArrayTableModel(resultsTable);
             message = message.concat(resultsTableModel.getRowCount() + "\n");
             TableBuilder resultsTableBuilder = new TableBuilder(resultsTableModel);
@@ -69,32 +60,8 @@ public class DatabaseCommands {
         return message;
     }
 
-    public ExternalDatabaseResolver parseDatabase(String database) {
-        if (database.equals(allDatabases)) {
-            return new ExternalDatabaseResolver(databaseService.getAvailableExternalDatabases(), null);
-        } else {
-            HashSet<ExternalDatabase> externalDatabases = new HashSet<>();
-            ArrayList<String> errorNames = new ArrayList<>();
-            String[] dbs = database.split(",");
-            for (String db : dbs) {
-                boolean foundCorrespondingDb = false;
-                for (ExternalDatabase externalDatabase : databaseService.getAvailableExternalDatabases()) {
-                    if (externalDatabase.getName().toLowerCase().equals(db.toLowerCase())) {
-                        externalDatabases.add(externalDatabase);
-                        foundCorrespondingDb = true;
-                    }
-                }
-                if (!foundCorrespondingDb) {
-                    errorNames.add(db);
-                    externalDatabases.add(ExternalDatabase.INVALID_DATABASE);
-                }
-            }
-            return new ExternalDatabaseResolver(new ArrayList<>(externalDatabases), errorNames);
-        }
-    }
-
     public <T> Object[][] tablify(String title, List<T> list) {
-        int offset = title == null? 0 : 1;
+        int offset = title == null ? 0 : 1;
 
         Object[][] table = new Object[list.size() + offset][1];
         if (title != null) {
@@ -143,5 +110,15 @@ public class DatabaseCommands {
         }
         terminal.writer().println("Created user '" + username + "'.");
         terminal.flush();
+    }
+
+
+    @ShellMethod("Explicitly save a movie to the local database (not recommended; for debug purposes)")
+    public String save(String movieName) {
+        Movie movie = new Movie(movieName);
+        ArrayList<Movie> movies = new ArrayList<>();
+        movies.add(movie);
+        databaseService.saveMovies(movies);
+        return "Saved movie";
     }
 }

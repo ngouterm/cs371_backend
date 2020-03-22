@@ -46,6 +46,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
     @Override
     public ArrayList<Movie> search(DataType dataType, String data) {
+        ArrayList<Movie> moviesToReturn = new ArrayList<>();
         switch (dataType) {
             case USER:
                 break;
@@ -60,16 +61,15 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
 
-                    conn.close();
-
-                    while(resultSet.next()){
+                    while (resultSet.next()) {
                         resultSet.getString("title");
+                        moviesToReturn.add(new Movie(resultSet.getString("title")));
                     }
+                    return moviesToReturn;
                 } catch (Exception e) {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
-
                 break;
             }
             case ACTOR:
@@ -79,6 +79,29 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     }
 
     public User getUser(String data) {
+
+        String userName = "";
+        String password;
+        try {
+            Connection conn = connect();
+
+            PreparedStatement statement = connection.prepareStatement("select * from USERS where username = ?");
+            statement.setString(1, data);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+
+            while (resultSet.next()) {
+                userName = resultSet.getString("username");
+                password = resultSet.getString("password");
+            }
+            if (!userName.equals("")) {
+                return new User(userName);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
@@ -87,7 +110,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         Connection connection = connect();
         for (Movie movie : data) {
             String query = " insert into MOVIES (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate)"
-                    + " values (?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?)";
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             // create the mysql insert preparedstatement
             try {
@@ -97,19 +120,17 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 preparedStmt.setInt(3, movie.getVoteCount());
                 preparedStmt.setBoolean(4, movie.getVideo());
                 preparedStmt.setString(5, movie.getPosterPath());
-
                 preparedStmt.setInt(6, movie.getID());
                 preparedStmt.setBoolean(7, movie.getAdult());
                 preparedStmt.setString(8, movie.getBackgroundPath());
                 preparedStmt.setString(9, movie.getOriginalLanguage());
-                preparedStmt.setInt(10, 1);
-                preparedStmt.setString(11, movie.getOverview());
-                preparedStmt.setString(10, movie.getReleaseDate());
+                preparedStmt.setString(10, movie.getOriginalTitle());
+                preparedStmt.setInt(11, 1);
+                preparedStmt.setString(12, movie.getOverview());
+                preparedStmt.setString(13, movie.getReleaseDate());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
-
-                connection.close();
             } catch (SQLException e) {
                 System.out.println(e.toString());
             }

@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Movie {
@@ -19,12 +20,11 @@ public class Movie {
     private String releaseDate;
 
     public Movie() {
-        
+        this("");
     }
 
     public Movie(String title) {
-        this.title = title;
-        //TODO: initialize other values
+        this(0.0, 0, false, "", 0, false, "", "", title, new ArrayList<Integer>(), title, 0.0, "", "");
     }
 
     public Movie(Double popularity, Integer voteCount, Boolean video, String posterPath, Integer ID, Boolean adult, String backgroundPath, String originalLanguage, String originalTitle, List<Integer> genreIDs, String title, Double voteAverage, String overview, String releaseDate) {
