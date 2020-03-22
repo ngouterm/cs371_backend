@@ -6,12 +6,18 @@ import com.example.thebigmoviebackend.storage.DataAction;
 import com.example.thebigmoviebackend.storage.DataType;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
 import com.example.thebigmoviebackend.storage.StringParser;
+import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbMovies;
+import info.movito.themoviedbapi.model.MovieDb;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
 public class ExternalDatabaseService implements DatabaseService {
+    TmdbMovies movies = new TmdbApi("5d93339e310ea272a10acef74057cec2").getMovies();
+    MovieDb movie = movies.getMovie(5353, "en");
+
     @Override
     public ArrayList<ExternalDatabase> getAvailableExternalDatabases() {
         //TODO: implement
