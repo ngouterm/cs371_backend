@@ -131,8 +131,6 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
                 // execute the preparedstatement
                 preparedStmt.execute();
-
-                connection.close();
             } catch (SQLException e) {
                 System.out.println(e.toString());
             }
