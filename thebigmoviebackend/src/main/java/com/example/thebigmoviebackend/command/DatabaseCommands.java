@@ -3,11 +3,9 @@ package com.example.thebigmoviebackend.command;
 import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.service.DatabaseService;
-import com.example.thebigmoviebackend.service.ExternalDatabaseService;
 import com.example.thebigmoviebackend.service.InternalDatabaseService;
+import com.example.thebigmoviebackend.service.MixedDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
-import com.example.thebigmoviebackend.storage.DataType;
-import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +18,13 @@ import org.springframework.shell.table.TableBuilder;
 import org.springframework.shell.table.TableModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 @ShellComponent
 public class DatabaseCommands {
 
-    InternalDatabaseService databaseService = new InternalDatabaseService();
+    MixedDatabaseService databaseService = new MixedDatabaseService();
 
     @Autowired
     UserService userService;
@@ -46,16 +43,8 @@ public class DatabaseCommands {
         int shellWidth = 80;
 
         String message = "You searched for '" + query + "'\n\n";
-//        message = message.concat("We searched the following databases:\n");
-//
-//        ExternalDatabaseResolver externalDatabaseResolver = parseDatabase(database);
-//        Object[][] dbTable = tablify("Databases", externalDatabaseResolver.externalDatabases);
-//        TableModel dbTableModel = new ArrayTableModel(dbTable);
-//        TableBuilder dbTableBuilder = new TableBuilder(dbTableModel);
-//        dbTableBuilder.addFullBorder(BorderStyle.fancy_light);
-//        message = message.concat(dbTableBuilder.build().render(shellWidth) + "\n");
 
-        ArrayList<Movie> results = databaseService.getMovieResults(query, null);
+        ArrayList<Movie> results = databaseService.getMovieResults(query);
         if (!results.isEmpty()) {
             message = message.concat("We got the following results:\n");
             Object[][] resultsTable = tablify(null, results);
@@ -69,30 +58,6 @@ public class DatabaseCommands {
         }
 
         return message;
-    }
-
-    public ExternalDatabaseResolver parseDatabase(String database) {
-        if (database.equals(allDatabases)) {
-            return new ExternalDatabaseResolver(databaseService.getAvailableExternalDatabases(), null);
-        } else {
-            HashSet<ExternalDatabase> externalDatabases = new HashSet<>();
-            ArrayList<String> errorNames = new ArrayList<>();
-            String[] dbs = database.split(",");
-            for (String db : dbs) {
-                boolean foundCorrespondingDb = false;
-                for (ExternalDatabase externalDatabase : databaseService.getAvailableExternalDatabases()) {
-                    if (externalDatabase.getName().toLowerCase().equals(db.toLowerCase())) {
-                        externalDatabases.add(externalDatabase);
-                        foundCorrespondingDb = true;
-                    }
-                }
-                if (!foundCorrespondingDb) {
-                    errorNames.add(db);
-                    externalDatabases.add(ExternalDatabase.INVALID_DATABASE);
-                }
-            }
-            return new ExternalDatabaseResolver(new ArrayList<>(externalDatabases), errorNames);
-        }
     }
 
     public <T> Object[][] tablify(String title, List<T> list) {
