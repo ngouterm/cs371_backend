@@ -1,6 +1,7 @@
 package com.example.thebigmoviebackend.command;
 
 import com.example.thebigmoviebackend.model.ExternalDatabase;
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.service.DatabaseService;
@@ -76,24 +77,6 @@ public class DatabaseCommands {
         return table;
     }
 
-    private static class ExternalDatabaseResolver {
-        private ArrayList<ExternalDatabase> externalDatabases;
-        private ArrayList<String> errorNames;
-
-        public ExternalDatabaseResolver(ArrayList<ExternalDatabase> externalDatabases, ArrayList<String> errorNames) {
-            this.externalDatabases = externalDatabases;
-            this.errorNames = errorNames;
-        }
-
-        public ArrayList<ExternalDatabase> getExternalDatabases() {
-            return externalDatabases;
-        }
-
-        public ArrayList<String> getErrorNames() {
-            return errorNames;
-        }
-    }
-
     @ShellMethod("Create a user")
     public void createUser(@ShellOption(defaultValue = "NONE") String username) {
         if (username.equals("NONE")) {
@@ -117,6 +100,7 @@ public class DatabaseCommands {
 
     @ShellMethod("Login")
     public String login(String username) {
+        //TODO: password verification
         currentUser = userService.login(username, null);
         if (currentUser == null) {
             return "Could not find user '" + username + "'.";
@@ -133,5 +117,32 @@ public class DatabaseCommands {
         movies.add(movie);
         databaseService.saveMovies(movies);
         return "Saved movie";
+    }
+
+    @ShellMethod("Make list")
+    public String makeList(String name) {
+        if (currentUser == null) {
+            return "Must be logged in to perform that action.";
+        } else {
+            userService.createMediaList(currentUser, name);
+            return "Created list";
+        }
+    }
+
+    @ShellMethod("Display a list")
+    public void listList(String name, @ShellOption(defaultValue = "NONE") String username) {
+        User user;
+        if (username.equals("NONE")) {
+            user = currentUser;
+        } else {
+            //TODO: password verification
+            user = userService.login(username, null);
+        }
+        MediaList mediaList = userService.getMediaList(user, name);
+        System.out.println(mediaList.getName() + " by " + mediaList.getUser());
+        System.out.println("=================================================");
+        for (Movie movie: mediaList.getMovies()) {
+            System.out.println(movie);
+        }
     }
 }

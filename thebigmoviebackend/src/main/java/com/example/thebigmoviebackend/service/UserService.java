@@ -16,7 +16,7 @@ public class UserService {
     DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     //    ArrayList<User> users = new ArrayList<>();
-    ArrayList<MediaList> mediaLists;
+    ArrayList<MediaList> mediaLists = new ArrayList<>();
 
 //    {
 //        //Add reserved usernames.
