@@ -2,6 +2,7 @@ package com.example.thebigmoviebackend.command;
 
 import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.Movie;
+import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.service.DatabaseService;
 import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.MixedDatabaseService;
@@ -34,6 +35,8 @@ public class DatabaseCommands {
 
     @Autowired
     LineReader lineReader;
+
+    User currentUser = null;
 
     private final String allDatabases = "all";
 
@@ -110,6 +113,16 @@ public class DatabaseCommands {
         }
         terminal.writer().println("Created user '" + username + "'.");
         terminal.flush();
+    }
+
+    @ShellMethod("Login")
+    public String login(String username) {
+        currentUser = userService.login(username, null);
+        if (currentUser == null) {
+            return "Could not find user '" + username + "'.";
+        } else {
+            return "Logged in as '" + username + "'";
+        }
     }
 
 

@@ -3,6 +3,8 @@ package com.example.thebigmoviebackend.service;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
+import com.example.thebigmoviebackend.storage.DatabaseManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,19 +13,22 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    ArrayList<User> users = new ArrayList<>();
+    DatabaseManager databaseManager = DatabaseManager.getInstance();
+
+    //    ArrayList<User> users = new ArrayList<>();
     ArrayList<MediaList> mediaLists;
 
-    {
-        //Add reserved usernames.
-        users.add(new User("q"));
-    }
+//    {
+//        //Add reserved usernames.
+//        users.add(new User("q"));
+//    }
 
     public boolean createUser(String username) {
         //TODO: prompt for password, email
-        User user = new User(username);
-        if (!users.contains(user)) {
-            users.add(user);
+        User user = databaseManager.getUser(username);
+        if (user == null) {
+            user = new User(username);
+            databaseManager.saveUser(user);
             return true;
         }
         return false;
@@ -31,12 +36,7 @@ public class UserService {
 
     public User login(String username, String password) {
         //TODO: implement password check
-        User user = new User(username);
-        if (users.contains(user)) {
-            return user;
-        } else {
-            return null;
-        }
+        return databaseManager.getUser(username);
     }
 
     public ArrayList<MediaList> getMediaLists(User user) {

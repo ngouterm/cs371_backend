@@ -147,9 +147,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         // create the mysql insert preparedstatement
         try {
             PreparedStatement preparedStmt = connection.prepareStatement(query);
-//                preparedStmt.setString(1, data.g);
-//                preparedStmt.setDouble(2, movie.getVoteAverage());
-
+            preparedStmt.setString(1, data.getUsername());
+            preparedStmt.setString(2, data.getPassword());
 
             // execute the preparedstatement
             preparedStmt.execute();
