@@ -39,6 +39,7 @@ public class DatabaseCommands {
 
     User currentUser = null;
     ArrayList<Movie> recentResults = null;
+    MediaList recentMediaList = null;
 
     private final String allDatabases = "all";
 
@@ -140,7 +141,7 @@ public class DatabaseCommands {
     }
 
     @ShellMethod("List all lists for a user")
-    public String listAll(@ShellOption(defaultValue = "NONE") String username) {
+    public String listLists(@ShellOption(defaultValue = "NONE") String username) {
         User user = getUser(username);
         ArrayList<MediaList> mediaLists = userService.getMediaLists(user);
 
@@ -159,7 +160,7 @@ public class DatabaseCommands {
     public void listList(String name, @ShellOption(defaultValue = "NONE") String username) {
         User user;
         user = getUser(username);
-        MediaList mediaList = userService.getMediaList(user, name);
+        MediaList mediaList = getMediaList(user, name);
         System.out.println(mediaList.getName() + " by " + mediaList.getUser());
         System.out.println("=================================================");
         for (Movie movie : mediaList.getMovies()) {
@@ -168,28 +169,43 @@ public class DatabaseCommands {
     }
 
     private User getUser(@ShellOption(defaultValue = "NONE") String username) {
-        User user;
         if (username.equals("NONE")) {
-            user = currentUser;
+            return currentUser;
         } else {
             //TODO: password verification
-            user = userService.login(username, null);
+            return userService.login(username, null);
         }
-        return user;
+    }
+
+    private MediaList getMediaList(User user, @ShellOption(defaultValue = "NONE") String listName) {
+        if (!listName.equals("NONE")) {
+            recentMediaList = getMediaList(user, listName);
+        }
+        return recentMediaList;
     }
 
     @ShellMethod("Save an item from recent results")
-    public String save(int index, String listName, @ShellOption(defaultValue = "NONE") String username) {
+    public String save(int index, String listName) {
         return requireLogin(() -> {
             try {
-                User user = getUser(username);
                 Movie movie = recentResults.get(index - 1);
-                MediaList mediaList = userService.getMediaList(user, listName);
+                MediaList mediaList = getMediaList(currentUser, listName);
                 mediaList.addMovie(movie);
+                userService.saveMediaList(mediaList);
                 return "Saved item to list.";
             } catch (NullPointerException e) {
                 return e.getLocalizedMessage();
             }
+        });
+    }
+
+    @ShellMethod("Remove item from list")
+    public String remove(int index, String listName) {
+        return requireLogin(() -> {
+            MediaList mediaList = getMediaList(currentUser, listName);
+            Movie movie = mediaList.removeMovie(index);
+            userService.saveMediaList(mediaList);
+            return "Removed '" + movie + "'.";
         });
     }
 }

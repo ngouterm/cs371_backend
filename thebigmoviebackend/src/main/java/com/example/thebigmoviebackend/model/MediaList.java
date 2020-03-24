@@ -33,6 +33,10 @@ public class MediaList {
         movies.add(movie);
     }
 
+    public Movie removeMovie(int index) {
+        return movies.remove(index);
+    }
+
     public String getName() {
         return name;
     }

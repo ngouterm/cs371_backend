@@ -56,4 +56,8 @@ public class UserService {
                 .collect(Collectors.toList()).get(0);
     }
 
+    public void saveMediaList(MediaList mediaList) {
+
+    }
+
 }
