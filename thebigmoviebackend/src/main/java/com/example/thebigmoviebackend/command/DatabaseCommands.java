@@ -1,7 +1,9 @@
 package com.example.thebigmoviebackend.command;
 
 import com.example.thebigmoviebackend.model.ExternalDatabase;
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
+import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.service.DatabaseService;
 import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.MixedDatabaseService;
@@ -35,24 +37,26 @@ public class DatabaseCommands {
     @Autowired
     LineReader lineReader;
 
+    User currentUser = null;
+    ArrayList<Movie> recentResults = null;
+    MediaList recentMediaList = null;
+
     private final String allDatabases = "all";
+
+    int shellWidth = 80;
 
     @ShellMethod("Search for a movie, television show, or actor.")
     public String search(String query, @ShellOption(value = {"-db"}, defaultValue = allDatabases) String database) {
-
-        int shellWidth = 80;
-
         String message = "You searched for '" + query + "'\n\n";
 
         ArrayList<Movie> results = databaseService.getMovieResults(query);
+        recentResults = results;
         if (!results.isEmpty()) {
             message = message.concat("We got the following results:\n");
-            Object[][] resultsTable = tablify(null, results);
-            TableModel resultsTableModel = new ArrayTableModel(resultsTable);
-            message = message.concat(resultsTableModel.getRowCount() + "\n");
-            TableBuilder resultsTableBuilder = new TableBuilder(resultsTableModel);
-            resultsTableBuilder.addFullBorder(BorderStyle.fancy_light);
-            message = message.concat(resultsTableBuilder.build().render(shellWidth));
+
+            message = message.concat(tablify(null, results, true));
+
+            message = message.concat("To save a result, call 'save x' where x is the number next to the movie.");
         } else {
             message = message.concat("No results found.");
         }
@@ -60,35 +64,26 @@ public class DatabaseCommands {
         return message;
     }
 
-    public <T> Object[][] tablify(String title, List<T> list) {
+    public <T> String tablify(String title, List<T> list, boolean includeIndices) {
         int offset = title == null ? 0 : 1;
 
-        Object[][] table = new Object[list.size() + offset][1];
+        Object[][] table = new Object[list.size() + offset][includeIndices ? 2 : 1];
         if (title != null) {
             table[0][0] = title;
         }
         for (int i = 0; i < list.size(); i++) {
-            table[i + offset][0] = list.get(i);
-        }
-        return table;
-    }
-
-    private static class ExternalDatabaseResolver {
-        private ArrayList<ExternalDatabase> externalDatabases;
-        private ArrayList<String> errorNames;
-
-        public ExternalDatabaseResolver(ArrayList<ExternalDatabase> externalDatabases, ArrayList<String> errorNames) {
-            this.externalDatabases = externalDatabases;
-            this.errorNames = errorNames;
+            if (includeIndices) {
+                table[i + offset][0] = i + 1;
+                table[i + offset][1] = list.get(i);
+            } else {
+                table[i + offset][0] = list.get(i);
+            }
         }
 
-        public ArrayList<ExternalDatabase> getExternalDatabases() {
-            return externalDatabases;
-        }
-
-        public ArrayList<String> getErrorNames() {
-            return errorNames;
-        }
+        TableModel tableModel = new ArrayTableModel(table);
+        TableBuilder tableBuilder = new TableBuilder(tableModel);
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+        return tableBuilder.build().render(shellWidth);
     }
 
     @ShellMethod("Create a user")
@@ -112,13 +107,105 @@ public class DatabaseCommands {
         terminal.flush();
     }
 
+    @ShellMethod("Login")
+    public String login(String username) {
+        //TODO: password verification
+        currentUser = userService.login(username, null);
+        if (currentUser == null) {
+            return "Could not find user '" + username + "'.";
+        } else {
+            return "Logged in as '" + username + "'";
+        }
+    }
+
 
     @ShellMethod("Explicitly save a movie to the local database (not recommended; for debug purposes)")
-    public String save(String movieName) {
+    public String saveRaw(String movieName) {
         Movie movie = new Movie(movieName);
         ArrayList<Movie> movies = new ArrayList<>();
         movies.add(movie);
         databaseService.saveMovies(movies);
         return "Saved movie";
+    }
+
+    interface RequireLogin {
+        String action();
+    }
+
+    public String requireLogin(RequireLogin requireLogin) {
+        if (currentUser == null) {
+            return "Must be logged in to perform that action";
+        } else {
+            return requireLogin.action();
+        }
+    }
+
+    @ShellMethod("List all lists for a user")
+    public String listLists(@ShellOption(defaultValue = "NONE") String username) {
+        User user = getUser(username);
+        ArrayList<MediaList> mediaLists = userService.getMediaLists(user);
+
+        return tablify("Lists by " + user, mediaLists, false);
+    }
+
+    @ShellMethod("Make list")
+    public String makeList(String name) {
+        return requireLogin(() -> {
+            userService.createMediaList(currentUser, name);
+            return "Created list";
+        });
+    }
+
+    @ShellMethod("Display a list")
+    public void listList(String name, @ShellOption(defaultValue = "NONE") String username) {
+        User user;
+        user = getUser(username);
+        MediaList mediaList = getMediaList(user, name);
+        System.out.println(mediaList.getName() + " by " + mediaList.getUser());
+        System.out.println("=================================================");
+        for (Movie movie : mediaList.getMovies()) {
+            System.out.println(movie);
+        }
+    }
+
+    private User getUser(@ShellOption(defaultValue = "NONE") String username) {
+        if (username.equals("NONE")) {
+            return currentUser;
+        } else {
+            //TODO: password verification
+            return userService.login(username, null);
+        }
+    }
+
+    private MediaList getMediaList(User user, @ShellOption(defaultValue = "NONE") String listName) {
+        if (!listName.equals("NONE")) {
+            recentMediaList = getMediaList(user, listName);
+        }
+        return recentMediaList;
+    }
+
+    @ShellMethod("Save an item from recent results")
+    public String save(int index, String listName) {
+        return requireLogin(() -> {
+            try {
+                Movie movie = recentResults.get(index - 1);
+                MediaList mediaList = getMediaList(currentUser, listName);
+                mediaList.addMovie(movie);
+                userService.saveMediaList(mediaList);
+                return "Saved item to list.";
+            } catch (NullPointerException e) {
+                return e.getLocalizedMessage();
+            }
+        });
+    }
+
+    @ShellMethod("Remove item from list")
+    public String remove(int index, String listName) {
+        return requireLogin(() -> {
+            MediaList mediaList = getMediaList(currentUser, listName);
+            Movie movie = mediaList.removeMovie(index);
+            userService.saveMediaList(mediaList);
+            return "Removed '" + movie + "'.";
+        });
     }
 }

@@ -33,11 +33,20 @@ public class MediaList {
         movies.add(movie);
     }
 
+    public Movie removeMovie(int index) {
+        return movies.remove(index);
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

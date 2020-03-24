@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class User {
     String username;
+    String password = "";
+    String email = "";
 
     public User(String username) {
         this.username = username;
@@ -20,5 +22,18 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }
