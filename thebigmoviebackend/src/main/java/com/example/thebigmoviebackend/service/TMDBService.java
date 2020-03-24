@@ -43,4 +43,9 @@ public class TMDBService implements DatabaseService {
         }
         return results;
     }
+
+    @Override
+    public String toString() {
+        return "themoviedb";
+    }
 }
