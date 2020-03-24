@@ -60,4 +60,8 @@ public class UserService {
 
     }
 
+    public void deleteMediaList(User user, MediaList mediaList) {
+        mediaLists.remove(mediaList);
+    }
+
 }

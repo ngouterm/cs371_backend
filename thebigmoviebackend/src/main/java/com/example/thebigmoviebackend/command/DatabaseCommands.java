@@ -184,13 +184,13 @@ public class DatabaseCommands {
 
     private MediaList getMediaList(User user, @ShellOption(defaultValue = "NONE") String listName) {
         if (!listName.equals("NONE")) {
-            recentMediaList = getMediaList(user, listName);
+            recentMediaList = userService.getMediaList(user, listName);
         }
         return recentMediaList;
     }
 
     @ShellMethod("Save an item from recent results")
-    public String save(int index, String listName) {
+    public String save(int index, @ShellOption(defaultValue = "NONE") String listName) {
         return requireLogin(() -> {
             try {
                 Movie movie = recentResults.get(index - 1);
@@ -205,12 +205,21 @@ public class DatabaseCommands {
     }
 
     @ShellMethod("Remove item from list")
-    public String remove(int index, String listName) {
+    public String remove(int index, @ShellOption(defaultValue = "NONE") String listName) {
         return requireLogin(() -> {
             MediaList mediaList = getMediaList(currentUser, listName);
-            Movie movie = mediaList.removeMovie(index);
+            Movie movie = mediaList.removeMovie(index - 1);
             userService.saveMediaList(mediaList);
             return "Removed '" + movie + "'.";
+        });
+    }
+
+    @ShellMethod("Delete list")
+    public String deleteList(@ShellOption(defaultValue = "NONE") String listName) {
+        return requireLogin(() -> {
+            MediaList mediaList = getMediaList(currentUser, listName);
+            userService.deleteMediaList(currentUser, mediaList);
+            return "Deleted list.";
         });
     }
 }
