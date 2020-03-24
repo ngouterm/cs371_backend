@@ -2,6 +2,7 @@ package com.example.thebigmoviebackend.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Movie {
     private Double popularity;
@@ -18,16 +19,17 @@ public class Movie {
     private Double voteAverage;
     private String overview;
     private String releaseDate;
+    private String uuid;
 
     public Movie() {
         this("");
     }
 
     public Movie(String title) {
-        this(0.0, 0, false, "", 0, false, "", "", title, new ArrayList<Integer>(), title, 0.0, "", "");
+        this(0.0, 0, false, "", 0, false, "", "", title, new ArrayList<Integer>(), title, 0.0, "", "",UUID.randomUUID().toString());
     }
 
-    public Movie(Double popularity, Integer voteCount, Boolean video, String posterPath, Integer ID, Boolean adult, String backgroundPath, String originalLanguage, String originalTitle, List<Integer> genreIDs, String title, Double voteAverage, String overview, String releaseDate) {
+    public Movie(Double popularity, Integer voteCount, Boolean video, String posterPath, Integer ID, Boolean adult, String backgroundPath, String originalLanguage, String originalTitle, List<Integer> genreIDs, String title, Double voteAverage, String overview, String releaseDate, String uuid) {
         this.popularity = popularity;
         this.voteCount = voteCount;
         this.video = video;
@@ -42,6 +44,7 @@ public class Movie {
         this.voteAverage = voteAverage;
         this.overview = overview;
         this.releaseDate = releaseDate;
+        this.uuid = uuid;
     }
 
     public Double getPopularity() {
@@ -154,6 +157,12 @@ public class Movie {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public String getUuid(){ return uuid;}
+
+    public void setUuid(String uuid){
+        this.uuid = uuid;
     }
 
     @Override

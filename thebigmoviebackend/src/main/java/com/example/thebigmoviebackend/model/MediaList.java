@@ -1,16 +1,19 @@
 package com.example.thebigmoviebackend.model;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MediaList {
     User user;
     ArrayList<Movie> movies;
     String name;
+    String uuid;
 
     public MediaList(User user, String name) {
         this.user = user;
         this.movies = new ArrayList<>();
         this.name = name;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public User getUser() {
@@ -49,4 +52,6 @@ public class MediaList {
     public String toString() {
         return name;
     }
+
+    public String getUUID(){return uuid;}
 }

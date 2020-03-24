@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
@@ -29,6 +30,11 @@ class LocalDatabaseHandle extends  AbstractStorageHandle implements DatabaseHand
     }
 
     @Override
+    public ArrayList<MediaList> getLists(User user) {
+        return null;
+    }
+
+    @Override
     public void prepare() {
 
     }
@@ -43,8 +49,12 @@ class LocalDatabaseHandle extends  AbstractStorageHandle implements DatabaseHand
 
     }
 
-    @Override
     public void saveUser(User data) {
+
+    }
+
+    @Override
+    public void saveList(MediaList mediaList) {
 
     }
 }

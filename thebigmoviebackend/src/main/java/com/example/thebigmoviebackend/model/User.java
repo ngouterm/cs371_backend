@@ -1,14 +1,22 @@
 package com.example.thebigmoviebackend.model;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class User {
     String username;
     String password = "";
     String email = "";
+    String uuid;
 
     public User(String username) {
         this.username = username;
+        this.uuid = UUID.randomUUID().toString();
+    }
+
+    public User(String username, String uuid) {
+        this.username = username;
+        this.uuid = uuid;
     }
 
     @Override
@@ -31,6 +39,8 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public String getUuid(){ return uuid;}
 
     @Override
     public String toString() {

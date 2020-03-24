@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
@@ -54,6 +55,10 @@ public class DatabaseManager implements StorageManager {
 
     public void saveUser(User data) {
         localDatabaseHandle.saveUser(data);
+    }
+
+    public void saveList(MediaList mediaList) {
+        localDatabaseHandle.saveList(mediaList);
     }
 
 

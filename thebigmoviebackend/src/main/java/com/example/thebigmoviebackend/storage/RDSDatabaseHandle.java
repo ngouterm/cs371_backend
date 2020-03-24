@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
@@ -56,7 +57,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 try {
                     Connection conn = connect();
 
-                    PreparedStatement statement = connection.prepareStatement("select * from MOVIES where title = ?");
+                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title = ?");
                     statement.setString(1, data);
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
@@ -82,10 +83,11 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
         String userName = "";
         String password;
+        String uuid = "";
         try {
             Connection conn = connect();
 
-            PreparedStatement statement = connection.prepareStatement("select * from USERS where username = ?");
+            PreparedStatement statement = connection.prepareStatement("select * from USER where username = ?");
             statement.setString(1, data);
             ResultSet resultSet = statement.executeQuery();
             statement.clearParameters();
@@ -93,9 +95,10 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             while (resultSet.next()) {
                 userName = resultSet.getString("username");
                 password = resultSet.getString("password");
+                uuid = resultSet.getString("userUUID");
             }
-            if (!userName.equals("")) {
-                return new User(userName);
+            if(!userName.equals("") && !uuid.equals("")) {
+                return new User(userName, uuid);
             }
 
         } catch (Exception e) {
@@ -109,8 +112,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public void saveMovies(ArrayList<Movie> data) {
         Connection connection = connect();
         for (Movie movie : data) {
-            String query = " insert into MOVIES (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String query = " insert into MEDIA (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate, mediaUUID)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             // create the mysql insert preparedstatement
             try {
@@ -128,6 +131,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 preparedStmt.setInt(11, 1);
                 preparedStmt.setString(12, movie.getOverview());
                 preparedStmt.setString(13, movie.getReleaseDate());
+                preparedStmt.setString(14, movie.getUuid());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
@@ -141,14 +145,15 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public void saveUser(User data) {
         Connection connection = connect();
 
-        String query = " insert into USERS (username, password)"
-                + " values (?, ?)";
+        String query = " insert into USER (username, password, userUUID)"
+                + " values (?, ?,?)";
 
         // create the mysql insert preparedstatement
         try {
             PreparedStatement preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, data.getUsername());
             preparedStmt.setString(2, data.getPassword());
+            preparedStmt.setString(2, data.getUuid());
 
             // execute the preparedstatement
             preparedStmt.execute();
@@ -158,5 +163,75 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             System.out.println(e.toString());
         }
 
+    }
+    @Override
+    public void saveList(MediaList mediaList) {
+        Connection connection = connect();
+
+        for (Movie movie : mediaList.getMovies()) {
+            int id = -1;
+            try {
+                PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title = ?");
+                statement.setString(1, movie.getTitle());
+                ResultSet resultSet = statement.executeQuery();
+                statement.clearParameters();
+
+                while (resultSet.next()) {
+                    id = resultSet.getInt("idMedia");
+                }
+                String query = " insert into MEDIALIST (idMedia, mediaListUUID)"
+                        + " values (?, ?)";
+
+                // create the mysql insert preparedstatement
+
+                try {
+                    PreparedStatement preparedStmt = connection.prepareStatement(query);
+                    if(id == -1 ){
+                        throw new SQLException();
+                    }
+                    preparedStmt.setInt(1, id);
+                    preparedStmt.setString(2, mediaList.getUUID());
+
+                    // execute the preparedstatement
+                    preparedStmt.execute();
+
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.toString());
+                }
+
+            }catch (SQLException e) {
+                System.out.println(e.toString());
+            }
+        }
+
+        // create the mysql insert preparedstatement
+        int id = -1;
+        try {
+            PreparedStatement statement = connection.prepareStatement("select * from USER where userUUID = ?");
+            statement.setString(1, mediaList.getUser().getUuid());
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+
+            while (resultSet.next()) {
+                id = resultSet.getInt("idUser");
+            }
+
+            String query = " insert into MEDIALIST (idUser)"
+                    + " values (?)";
+
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            if(id == -1){
+                throw new SQLException();
+            }
+            preparedStmt.setInt(1, id);
+
+            // execute the preparedstatement
+            preparedStmt.execute();
+
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
     }
 }
