@@ -45,6 +45,11 @@ public class DatabaseCommands {
 
     int shellWidth = 80;
 
+    @ShellMethod("List all databases")
+    public String listDbs() {
+        return tablify(null, databaseService.getExternalDatabases(), false);
+    }
+
     @ShellMethod("Search for a movie, television show, or actor.")
     public String search(String query, @ShellOption(value = {"-db"}, defaultValue = allDatabases) String database) {
         String message = "You searched for '" + query + "'\n\n";
