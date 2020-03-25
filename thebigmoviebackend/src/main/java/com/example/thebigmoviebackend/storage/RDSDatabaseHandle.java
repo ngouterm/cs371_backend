@@ -277,34 +277,41 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             String uuid;
             String title;
             while (resultSet.next()) {
-
                 uuid = resultSet.getString("mediaListUUID");
                 title = resultSet.getString("listTitle");
+                MediaList mediaList = new MediaList(user, title, uuid);
+                mediaListArrayList.add(mediaList);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try{
+            for(MediaList mediaList : mediaListArrayList) {
+                String query = "SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = "+ "'" + mediaList.getUUID()  + "'";
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(query);
 
-                MediaList mediaList = new MediaList(user, uuid);
-                PreparedStatement statementMedia = connection.prepareStatement("SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = ?");
-                statementMedia.setString(1, mediaList.getUUID());
-                ResultSet resultSetMedia = statementMedia.executeQuery();
-                String mediaTitle;
-                String mediaUUID;
-                String releaseDate;
-                while (resultSetMedia.next()) {
-                    mediaTitle = resultSetMedia.getString("title");
-                    mediaUUID = resultSetMedia.getString("mediaUUID");
-                    releaseDate = resultSetMedia.getString("releaseDate");
+                while (resultSet.next()) {
+                    String mediaTitle;
+                    String mediaUUID;
+                    String releaseDate;
+                    mediaTitle = resultSet.getString("title");
+                    mediaUUID = resultSet.getString("mediaUUID");
+                    releaseDate = resultSet.getString("releaseDate");
                     Movie movie = new Movie(mediaTitle);
                     movie.setUuid(mediaUUID);
                     movie.setReleaseDate(releaseDate);
                     mediaList.addMovie(movie);
                 }
-                statementMedia.clearParameters();
-                mediaList.setName(title);
-                mediaListArrayList.add(mediaList);
+                resultSet.close();
             }
             return mediaListArrayList;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
 
         return null;

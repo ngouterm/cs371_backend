@@ -10,6 +10,13 @@ public class MediaList {
     String uuid;
     public MediaList(){};
 
+    public MediaList(User user, String name, String uuid) {
+        this.user = user;
+        this.movies = new ArrayList<>();
+        this.name = name;
+        this.uuid = uuid;
+    }
+
     public MediaList(User user, String name) {
         this.user = user;
         this.movies = new ArrayList<>();
@@ -55,4 +62,6 @@ public class MediaList {
     }
 
     public String getUUID(){return uuid;}
+
+    public void setVoid(String uuid){this.uuid = uuid;}
 }
