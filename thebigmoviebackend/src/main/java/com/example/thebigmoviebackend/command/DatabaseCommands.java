@@ -196,6 +196,7 @@ public class DatabaseCommands {
                 Movie movie = recentResults.get(index - 1);
                 MediaList mediaList = getMediaList(currentUser, listName);
                 mediaList.addMovie(movie);
+                userService.deleteMediaList(currentUser, mediaList);
                 userService.saveMediaList(mediaList);
                 return "Saved item to list.";
             } catch (NullPointerException e) {
