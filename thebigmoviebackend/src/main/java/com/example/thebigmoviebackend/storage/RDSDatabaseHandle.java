@@ -63,8 +63,9 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     statement.clearParameters();
 
                     while (resultSet.next()) {
-                        resultSet.getString("title");
-                        moviesToReturn.add(new Movie(resultSet.getString("title")));
+                        Movie movie = new Movie(resultSet.getString("title"));
+                        movie.setUuid(resultSet.getString("mediaUUID"));
+                        moviesToReturn.add(movie);
                     }
                     return moviesToReturn;
                 } catch (Exception e) {
@@ -180,8 +181,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     id = resultSet.getInt("idUser");
                 }
 
-                String query = " insert into MEDIALIST_LOOKUP (idUser, mediaListUUID)"
-                        + " values (?,?)";
+                String query = " insert into MEDIALIST_LOOKUP (idUser,listTitle,  mediaListUUID)"
+                        + " values (?,?,?)";
 
                 PreparedStatement preparedStmt = connection.prepareStatement(query);
                 if (id == -1) {
@@ -189,6 +190,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 }
                 preparedStmt.setInt(1, id);
                 preparedStmt.setString(2, mediaList.getUUID());
+                preparedStmt.setString(3, mediaList.getName());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
@@ -244,8 +246,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     id = resultSet.getInt("idUser");
                 }
 
-                String query = " insert into MEDIALIST_LOOKUP (idUser, mediaListUUID)"
-                        + " values (?,?)";
+                String query = " insert into MEDIALIST_LOOKUP (idUser, listTitle, mediaListUUID)"
+                        + " values (?,?,?)";
 
                 PreparedStatement preparedStmt = connection.prepareStatement(query);
                 if (id == -1) {
@@ -253,6 +255,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 }
                 preparedStmt.setInt(1, id);
                 preparedStmt.setString(2, mediaList.getUUID());
+                preparedStmt.setString(3, mediaList.getName());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
@@ -284,9 +287,12 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 ResultSet resultSetMedia = statementMedia.executeQuery();
                 statementMedia.clearParameters();
                 String mediaTitle;
+                String mediaUUID;
                 while (resultSetMedia.next()) {
                     mediaTitle = resultSetMedia.getString("title");
+                    mediaUUID = resultSetMedia.getString("mediaUUID");
                     Movie movie = new Movie(mediaTitle);
+                    movie.setUuid(mediaUUID);
                     mediaList.addMovie(movie);
                 }
                 mediaList.setName(title);
