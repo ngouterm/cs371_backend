@@ -20,7 +20,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 String password = "cs371sunypoly";
                 String hostname = "cs371-1.cnelkifhz6ce.us-east-2.rds.amazonaws.com";
                 String port = "3306";
-                String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password=" + password;
+                String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password=" + password + "&useSSL=false";
                 System.out.println(jdbcUrl);
                 System.out.println("Getting remote connection with connection string from environment variables.");
                 Connection con = DriverManager.getConnection(jdbcUrl);
@@ -158,7 +158,6 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             // execute the preparedstatement
             preparedStmt.execute();
 
-            connection.close();
         } catch (SQLException e) {
             System.out.println(e.toString());
         }
@@ -195,8 +194,6 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
                     // execute the preparedstatement
                     preparedStmt.execute();
-
-                    connection.close();
                 } catch (SQLException e) {
                     System.out.println(e.toString());
                 }
@@ -230,7 +227,6 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             // execute the preparedstatement
             preparedStmt.execute();
 
-            connection.close();
         } catch (SQLException e) {
             System.out.println(e.toString());
         }

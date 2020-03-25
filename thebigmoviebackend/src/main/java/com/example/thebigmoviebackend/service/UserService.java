@@ -16,7 +16,7 @@ public class UserService {
     DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     //    ArrayList<User> users = new ArrayList<>();
-    ArrayList<MediaList> mediaLists = new ArrayList<>();
+//    ArrayList<MediaList> mediaLists = new ArrayList<>();
 
 //    {
 //        //Add reserved usernames.
@@ -40,28 +40,25 @@ public class UserService {
     }
 
     public ArrayList<MediaList> getMediaLists(User user) {
-        return (ArrayList<MediaList>) mediaLists.stream().filter(mediaList -> mediaList.getUser().equals(user))
-                .collect(Collectors.toList());
+        return databaseManager.getLists(user);
     }
 
     public void createMediaList(User user, String name) {
         //TODO: check for dupes
         MediaList mediaList = new MediaList(user, name);
-        mediaLists.add(mediaList);
+        databaseManager.saveList(mediaList);
     }
 
     public MediaList getMediaList(User user, String name) {
-        return mediaLists.stream()
-                .filter(mediaList -> mediaList.getUser().equals(user) && mediaList.getName().equals(name))
-                .collect(Collectors.toList()).get(0);
+        return databaseManager.getLists(user).stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList()).get(0);
     }
 
     public void saveMediaList(MediaList mediaList) {
-
+        databaseManager.saveList(mediaList);
     }
 
     public void deleteMediaList(User user, MediaList mediaList) {
-        mediaLists.remove(mediaList);
+        databaseManager.deleteList(mediaList);
     }
 
 }

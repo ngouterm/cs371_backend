@@ -61,5 +61,9 @@ public class DatabaseManager implements StorageManager {
         localDatabaseHandle.saveList(mediaList);
     }
 
+    public ArrayList<MediaList> getLists(User user) {
+        return localDatabaseHandle.getLists(user);
+    }
 
+    public void deleteList(MediaList mediaList) { localDatabaseHandle.deleteList(mediaList);}
 }
