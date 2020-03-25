@@ -57,7 +57,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 try {
                     Connection conn = connect();
 
-                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title = ?");
+                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title LIKE %?%");
                     statement.setString(1, data);
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
@@ -271,11 +271,14 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             statement.setString(1, user.getUuid());
             ResultSet resultSet = statement.executeQuery();
             statement.clearParameters();
-            String id;
+            String uuid;
+            String title;
             while (resultSet.next()) {
 
-                id = resultSet.getString("mediaListUUID");
-                MediaList mediaList = new MediaList(user, id);
+                uuid = resultSet.getString("mediaListUUID");
+                title = resultSet.getString("listTitle");
+
+                MediaList mediaList = new MediaList(user, uuid);
                 PreparedStatement statementMedia = connection.prepareStatement("select * from MEDIALIST ml join MEDIA on ml.mediaUUID = m.mediaUUID WHERE ml.mediaListUUID = ?");
                 statementMedia.setString(1, mediaList.getUUID());
                 ResultSet resultSetMedia = statementMedia.executeQuery();
@@ -286,7 +289,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     Movie movie = new Movie(mediaTitle);
                     mediaList.addMovie(movie);
                 }
-
+                mediaList.setName(title);
                 mediaListArrayList.add(mediaList);
             }
             return mediaListArrayList;
