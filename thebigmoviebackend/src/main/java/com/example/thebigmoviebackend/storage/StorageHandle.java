@@ -18,4 +18,6 @@ interface StorageHandle {
     User getUser(String data);
 
     ArrayList<MediaList> getLists(User user);
+
+    void deleteList(MediaList mediaList);
 }

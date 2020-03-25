@@ -250,9 +250,9 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 id = resultSet.getString("mediaListUUID");
                 MediaList mediaList = new MediaList(user, id);
                 PreparedStatement statementMedia = connection.prepareStatement("select * from MEDIALIST ml join MEDIA on ml.idMedia = m.idMedia  WHERE ml.mediaListUUID = ?");
-                statement.setString(1, mediaList.getUUID());
-                ResultSet resultSetMedia = statement.executeQuery();
-                statement.clearParameters();
+                statementMedia.setString(1, mediaList.getUUID());
+                ResultSet resultSetMedia = statementMedia.executeQuery();
+                statementMedia.clearParameters();
                 String mediaTitle;
                 while (resultSetMedia.next()) {
                     mediaTitle = resultSetMedia.getString("title");
@@ -262,13 +262,36 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
                 mediaListArrayList.add(mediaList);
             }
-            return  mediaListArrayList;
+            return mediaListArrayList;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
 
         return null;
+
+    }
+
+    @Override
+    public void deleteList(MediaList mediaList) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * from MEDIALIST ml WHERE ml.mediaListUUID = ?");
+            statement.setString(1, mediaList.getUUID());
+            ResultSet resultSetMedia = statement.executeQuery();
+            statement.clearParameters();
+            while (resultSetMedia.next()) {
+                int listId = resultSetMedia.getInt("idMedialist");
+                PreparedStatement statementMLD = connection.prepareStatement("DELETE from MEDIALIST ml WHERE ml.mediaListUUID = ?");
+                statementMLD.setString(1,mediaList.getUUID());
+                statementMLD.execute();
+                PreparedStatement statementMLLD = connection.prepareStatement("DELETE from MEDIALIST_LOOKUP WHERE idMedialist = ?");
+                statementMLLD.setInt(1,listId);
+                statementMLLD.execute();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

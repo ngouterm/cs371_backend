@@ -20,4 +20,5 @@ abstract class AbstractStorageHandle implements StorageHandle {
 
     public abstract ArrayList<MediaList> getLists(User user);
 
+    public abstract void deleteList(MediaList mediaList);
 }
