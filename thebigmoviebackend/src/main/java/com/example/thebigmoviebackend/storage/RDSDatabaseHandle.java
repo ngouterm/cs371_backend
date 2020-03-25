@@ -57,7 +57,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 try {
                     Connection conn = connect();
 
-                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title LIKE ?");
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE title LIKE ?");
                     statement.setString(1, "%" + data + "%");
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
@@ -88,7 +88,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         try {
             Connection conn = connect();
 
-            PreparedStatement statement = connection.prepareStatement("select * from USERS where username = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS WHERE username = ?");
             statement.setString(1, data);
             ResultSet resultSet = statement.executeQuery();
             statement.clearParameters();
@@ -113,8 +113,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public void saveMovies(ArrayList<Movie> data) {
         Connection connection = connect();
         for (Movie movie : data) {
-            String query = " insert into MEDIA (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate, mediaUUID)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String query = "INSERT INTO MEDIA (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate, mediaUUID)"
+                    + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             // create the mysql insert preparedstatement
             try {
@@ -146,8 +146,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public void saveUser(User data) {
         Connection connection = connect();
 
-        String query = " insert into USERS (username, password, userUUID)"
-                + " values (?, ?,?)";
+        String query = "INSERT INTO USERS (username, password, userUUID)"
+                + " VALUES (?, ?,?)";
 
         // create the mysql insert preparedstatement
         try {
@@ -172,7 +172,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         if (mediaList.getMovies().isEmpty()) {
             int id = -1;
             try {
-                PreparedStatement statement = connection.prepareStatement("select * from USERS where userUUID = ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS WHERE userUUID = ?");
                 statement.setString(1, mediaList.getUser().getUuid());
                 ResultSet resultSet = statement.executeQuery();
                 statement.clearParameters();
@@ -181,7 +181,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     id = resultSet.getInt("idUser");
                 }
 
-                String query = " insert into MEDIALIST_LOOKUP (idUser,listTitle,  mediaListUUID)"
+                String query = "INSERT INTO MEDIALIST_LOOKUP (idUser,listTitle,  mediaListUUID)"
                         + " values (?,?,?)";
 
                 PreparedStatement preparedStmt = connection.prepareStatement(query);
@@ -203,7 +203,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             for (Movie movie : mediaList.getMovies()) {
                 int id = -1;
                 try {
-                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where mediaUUID = ?");
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE mediaUUID = ?");
                     statement.setString(1, movie.getUuid());
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
@@ -212,8 +212,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                         id = resultSet.getInt("idMedia");
                     }
 
-                    String query = "insert into MEDIALIST (idMedia, mediaListUUID)"
-                            + " values (?, ?)";
+                    String query = "INSERT INTO MEDIALIST (idMedia, mediaListUUID)"
+                            + " VALUES (?, ?)";
                     try {
                         PreparedStatement preparedStmt = connection.prepareStatement(query);
                         if (id == -1) {
@@ -237,7 +237,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             // create the mysql insert preparedstatement
             int id = -1;
             try {
-                PreparedStatement statement = connection.prepareStatement("select * from USERS where userUUID = ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS WHERE userUUID = ?");
                 statement.setString(1, mediaList.getUser().getUuid());
                 ResultSet resultSet = statement.executeQuery();
                 statement.clearParameters();
@@ -246,7 +246,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     id = resultSet.getInt("idUser");
                 }
 
-                String query = " insert into MEDIALIST_LOOKUP (idUser, listTitle, mediaListUUID)"
+                String query = "INSERT INTO MEDIALIST_LOOKUP (idUser, listTitle, mediaListUUID)"
                         + " values (?,?,?)";
 
                 PreparedStatement preparedStmt = connection.prepareStatement(query);
@@ -270,7 +270,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public ArrayList<MediaList> getLists(User user) {
         ArrayList<MediaList> mediaListArrayList = new ArrayList<>();
         try {
-            PreparedStatement statement = connection.prepareStatement("select * from MEDIALIST_LOOKUP mll join USERS u ON mll.idUser = u.idUser JOIN MEDIALIST ml ON mll.mediaListUUID = ml.mediaListUUID WHERE u.userUUID = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIALIST_LOOKUP mll JOIN USERS u ON mll.idUser = u.idUser JOIN MEDIALIST ml ON mll.mediaListUUID = ml.mediaListUUID WHERE u.userUUID = ?");
             statement.setString(1, user.getUuid());
             ResultSet resultSet = statement.executeQuery();
             statement.clearParameters();
@@ -282,7 +282,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 title = resultSet.getString("listTitle");
 
                 MediaList mediaList = new MediaList(user, uuid);
-                PreparedStatement statementMedia = connection.prepareStatement("select * from MEDIALIST ml JOIN MEDIA m on ml.idMedia = m.idMedia WHERE ml.mediaListUUID = ?");
+                PreparedStatement statementMedia = connection.prepareStatement("SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = ?");
                 statementMedia.setString(1, mediaList.getUUID());
                 ResultSet resultSetMedia = statementMedia.executeQuery();
                 statementMedia.clearParameters();
@@ -311,16 +311,16 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     @Override
     public void deleteList(MediaList mediaList) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * from MEDIALIST ml WHERE ml.mediaListUUID = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIALIST ml WHERE ml.mediaListUUID = ?");
             statement.setString(1, mediaList.getUUID());
             ResultSet resultSetMedia = statement.executeQuery();
             statement.clearParameters();
             while (resultSetMedia.next()) {
                 int listId = resultSetMedia.getInt("idMedialist");
-                PreparedStatement statementMLD = connection.prepareStatement("DELETE from MEDIALIST ml WHERE ml.mediaListUUID = ?");
+                PreparedStatement statementMLD = connection.prepareStatement("DELETE FROM MEDIALIST ml WHERE ml.mediaListUUID = ?");
                 statementMLD.setString(1, mediaList.getUUID());
                 statementMLD.execute();
-                PreparedStatement statementMLLD = connection.prepareStatement("DELETE from MEDIALIST_LOOKUP WHERE idMedialist = ?");
+                PreparedStatement statementMLLD = connection.prepareStatement("DELETE FROM MEDIALIST_LOOKUP WHERE idMedialist = ?");
                 statementMLLD.setInt(1, listId);
                 statementMLLD.execute();
             }
