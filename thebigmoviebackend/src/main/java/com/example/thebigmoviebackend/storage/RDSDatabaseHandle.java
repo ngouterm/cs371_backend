@@ -57,8 +57,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 try {
                     Connection conn = connect();
 
-                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title LIKE %?%");
-                    statement.setString(1, data);
+                    PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title LIKE ?");
+                    statement.setString(1, "%" + data + "%");
                     ResultSet resultSet = statement.executeQuery();
                     statement.clearParameters();
 
