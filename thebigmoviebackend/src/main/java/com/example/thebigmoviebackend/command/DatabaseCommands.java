@@ -162,7 +162,7 @@ public class DatabaseCommands {
     }
 
     @ShellMethod("Display a list")
-    public void listList(String name, @ShellOption(defaultValue = "NONE") String username) {
+    public void listList(@ShellOption(defaultValue = "NONE") String name, @ShellOption(defaultValue = "NONE") String username) {
         User user;
         user = getUser(username);
         MediaList mediaList = getMediaList(user, name);
