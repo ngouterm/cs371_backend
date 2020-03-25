@@ -166,6 +166,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
 
     @Override
     public void saveList(MediaList mediaList) {
+        saveMovies(mediaList.getMovies());
         Connection connection = connect();
         if (mediaList.getMovies().isEmpty()) {
             int id = -1;
