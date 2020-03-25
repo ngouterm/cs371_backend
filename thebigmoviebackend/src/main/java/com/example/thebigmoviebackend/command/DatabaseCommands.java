@@ -156,7 +156,7 @@ public class DatabaseCommands {
     @ShellMethod("Make list")
     public String makeList(String name) {
         return requireLogin(() -> {
-            userService.createMediaList(currentUser, name);
+            recentMediaList = userService.createMediaList(currentUser, name);
             return "Created list";
         });
     }

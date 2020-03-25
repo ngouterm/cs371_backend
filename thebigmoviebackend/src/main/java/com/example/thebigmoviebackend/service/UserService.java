@@ -43,10 +43,11 @@ public class UserService {
         return databaseManager.getLists(user);
     }
 
-    public void createMediaList(User user, String name) {
+    public MediaList createMediaList(User user, String name) {
         //TODO: check for dupes
         MediaList mediaList = new MediaList(user, name);
         databaseManager.saveList(mediaList);
+        return mediaList;
     }
 
     public MediaList getMediaList(User user, String name) {
