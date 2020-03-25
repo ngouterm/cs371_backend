@@ -8,6 +8,7 @@ public class MediaList {
     ArrayList<Movie> movies;
     String name;
     String uuid;
+    public MediaList(){};
 
     public MediaList(User user, String name) {
         this.user = user;
