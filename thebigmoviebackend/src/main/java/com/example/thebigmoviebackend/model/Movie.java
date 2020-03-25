@@ -167,6 +167,10 @@ public class Movie {
 
     @Override
     public String toString() {
-        return title + " (" + releaseDate + ")";
+        if (releaseDate == null || releaseDate.isEmpty()) {
+            return title;
+        } else {
+            return title + " (" + releaseDate + ")";
+        }
     }
 }
