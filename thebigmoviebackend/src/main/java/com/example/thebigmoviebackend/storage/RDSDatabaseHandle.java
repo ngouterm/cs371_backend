@@ -189,8 +189,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     throw new SQLException();
                 }
                 preparedStmt.setInt(1, id);
-                preparedStmt.setString(2, mediaList.getUUID());
-                preparedStmt.setString(3, mediaList.getName());
+                preparedStmt.setString(2, mediaList.getName());
+                preparedStmt.setString(3, mediaList.getUUID());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
@@ -254,8 +254,8 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     throw new SQLException();
                 }
                 preparedStmt.setInt(1, id);
-                preparedStmt.setString(2, mediaList.getUUID());
-                preparedStmt.setString(3, mediaList.getName());
+                preparedStmt.setString(2, mediaList.getName());
+                preparedStmt.setString(3, mediaList.getUUID());
 
                 // execute the preparedstatement
                 preparedStmt.execute();
