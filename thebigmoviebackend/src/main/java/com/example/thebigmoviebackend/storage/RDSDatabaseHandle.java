@@ -287,11 +287,14 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 ResultSet resultSetMedia = statementMedia.executeQuery();
                 String mediaTitle;
                 String mediaUUID;
+                String releaseDate;
                 while (resultSetMedia.next()) {
                     mediaTitle = resultSetMedia.getString("title");
                     mediaUUID = resultSetMedia.getString("mediaUUID");
+                    releaseDate = resultSetMedia.getString("releaseDate");
                     Movie movie = new Movie(mediaTitle);
                     movie.setUuid(mediaUUID);
+                    movie.setReleaseDate(releaseDate);
                     mediaList.addMovie(movie);
                 }
                 statementMedia.clearParameters();
