@@ -282,7 +282,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                 title = resultSet.getString("listTitle");
 
                 MediaList mediaList = new MediaList(user, uuid);
-                PreparedStatement statementMedia = connection.prepareStatement("select * from MEDIALIST ml join MEDIA on ml.mediaUUID = m.mediaUUID WHERE ml.mediaListUUID = ?");
+                PreparedStatement statementMedia = connection.prepareStatement("select * from MEDIALIST ml JOIN MEDIA on ml.idMedia = m.idMedia WHERE ml.mediaListUUID = ?");
                 statementMedia.setString(1, mediaList.getUUID());
                 ResultSet resultSetMedia = statementMedia.executeQuery();
                 statementMedia.clearParameters();
