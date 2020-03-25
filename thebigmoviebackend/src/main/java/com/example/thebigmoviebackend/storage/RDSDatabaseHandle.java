@@ -171,32 +171,31 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         for (Movie movie : mediaList.getMovies()) {
             int id = -1;
             try {
-                PreparedStatement statement = connection.prepareStatement("select * from MEDIA where title = ?");
-                statement.setString(1, movie.getTitle());
+                PreparedStatement statement = connection.prepareStatement("select * from MEDIA where mediaUUID = ?");
+                statement.setString(1, movie.getUuid());
                 ResultSet resultSet = statement.executeQuery();
                 statement.clearParameters();
 
                 while (resultSet.next()) {
                     id = resultSet.getInt("idMedia");
                 }
-                String query = " insert into MEDIALIST (idMedia, mediaListUUID)"
-                        + " values (?, ?)";
 
-                // create the mysql insert preparedstatement
+                    String query = "insert into MEDIALIST (idMedia, mediaListUUID)"
+                            + " values (?, ?)";
+                    try {
+                        PreparedStatement preparedStmt = connection.prepareStatement(query);
+                        if (id == -1) {
+                            throw new SQLException();
+                        }
+                        preparedStmt.setInt(1, id);
+                        preparedStmt.setString(2, mediaList.getUUID());
 
-                try {
-                    PreparedStatement preparedStmt = connection.prepareStatement(query);
-                    if (id == -1) {
-                        throw new SQLException();
+                        // execute the preparedstatement
+                        preparedStmt.execute();
+                    } catch (SQLException e) {
+                        System.out.println(e.toString());
                     }
-                    preparedStmt.setInt(1, id);
-                    preparedStmt.setString(2, mediaList.getUUID());
 
-                    // execute the preparedstatement
-                    preparedStmt.execute();
-                } catch (SQLException e) {
-                    System.out.println(e.toString());
-                }
 
             } catch (SQLException e) {
                 System.out.println(e.toString());
@@ -278,10 +277,10 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             while (resultSetMedia.next()) {
                 int listId = resultSetMedia.getInt("idMedialist");
                 PreparedStatement statementMLD = connection.prepareStatement("DELETE from MEDIALIST ml WHERE ml.mediaListUUID = ?");
-                statementMLD.setString(1,mediaList.getUUID());
+                statementMLD.setString(1, mediaList.getUUID());
                 statementMLD.execute();
                 PreparedStatement statementMLLD = connection.prepareStatement("DELETE from MEDIALIST_LOOKUP WHERE idMedialist = ?");
-                statementMLLD.setInt(1,listId);
+                statementMLLD.setInt(1, listId);
                 statementMLLD.execute();
             }
 
