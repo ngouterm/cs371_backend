@@ -236,7 +236,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     public ArrayList<MediaList> getLists(User user) {
         ArrayList<MediaList> mediaListArrayList = new ArrayList<>();
         try {
-            PreparedStatement statement = connection.prepareStatement("select * from MEDIALIST_LOOKUP mll  join USERS u where mml.isUser = u.idUser  JOIN MEDIALIST ml ON mll.idMedialist = ml.idMedialist WHERE u.userUUID = ?");
+            PreparedStatement statement = connection.prepareStatement("select * from MEDIALIST_LOOKUP mll  join USERS u where mll.idUser = u.idUser  JOIN MEDIALIST ml ON mll.idMedialist = ml.idMedialist WHERE u.userUUID = ?");
             statement.setString(1, user.getUuid());
             ResultSet resultSet = statement.executeQuery();
             statement.clearParameters();
