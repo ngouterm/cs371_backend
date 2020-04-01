@@ -3,7 +3,6 @@ package com.example.thebigmoviebackend.storage;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
-import jdk.internal.jline.internal.Nullable;
 
 import java.util.ArrayList;
 

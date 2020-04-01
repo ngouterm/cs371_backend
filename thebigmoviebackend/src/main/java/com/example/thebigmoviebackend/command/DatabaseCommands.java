@@ -96,6 +96,15 @@ public class DatabaseCommands {
         return message;
     }
 
+    @ShellMethod("Search for a user")
+    public String searchUsers(String query) {
+        ArrayList<User> results = userService.searchUsers(query);
+        if (results.isEmpty()) {
+            return "Found no results.";
+        }
+        return tablify("Found the following users: ", userService.searchUsers(query));
+    }
+
     public <T> String tablify(List<T> list) {
         return tablify(null, list, false, 1);
     }
