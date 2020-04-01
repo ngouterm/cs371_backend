@@ -67,4 +67,7 @@ public class UserService {
         return (ArrayList<User>) databaseManager.search(DataType.USER, query);
     }
 
+    public ArrayList<User> getAllUsers() {
+        return databaseManager.getAllUsers();
+    }
 }

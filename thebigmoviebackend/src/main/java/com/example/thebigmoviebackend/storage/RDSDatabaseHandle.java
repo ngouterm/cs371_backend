@@ -326,7 +326,7 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
     public ArrayList<Movie> getAllMedia() {
         ArrayList<Movie> allMedia = new ArrayList<>();
         try {
-            String query = "SELECT * FROM MEDIALIST ml";
+            String query = "SELECT * FROM MEDIA ml";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {

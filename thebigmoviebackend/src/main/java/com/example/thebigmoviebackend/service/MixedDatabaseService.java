@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.service;
 
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 
 import java.util.ArrayList;
@@ -47,5 +48,13 @@ public class MixedDatabaseService implements DatabaseService {
 
     public ArrayList<String> getExternalDatabases() {
         return (ArrayList<String>) externalDatabases.stream().map(DatabaseService::toString).collect(Collectors.toList());
+    }
+
+    public ArrayList<Movie> getAllMovies() {
+        return internalDatabaseService.getAllMovies();
+    }
+
+    public ArrayList<MediaList> getAllLists() {
+        return internalDatabaseService.getAllLists();
     }
 }

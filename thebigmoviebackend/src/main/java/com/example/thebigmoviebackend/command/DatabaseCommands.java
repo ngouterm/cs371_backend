@@ -1,11 +1,9 @@
 package com.example.thebigmoviebackend.command;
 
-import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.service.DatabaseService;
-import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.MixedDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
 import org.jline.reader.LineReader;
@@ -21,7 +19,6 @@ import org.springframework.shell.table.TableModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -198,6 +195,24 @@ public class DatabaseCommands {
         return tablify("Lists by " + user, mediaLists);
     }
 
+    @ShellMethod("List all movies in internal database")
+    public String listMovies() {
+        ArrayList<Movie> movies = databaseService.getAllMovies();
+        if (movies.isEmpty()) {
+            return "No movies.";
+        }
+        return tablify("Found these movies.", movies);
+    }
+
+    @ShellMethod("List all lists")
+    public String listAll() {
+        ArrayList<MediaList> lists = databaseService.getAllLists();
+        if (lists.isEmpty()) {
+            return "No lists.";
+        }
+        return tablify("Found these lists.", lists);
+    }
+
     @ShellMethod("Make list")
     public String makeList(String name) {
         return requireLogin(() -> {
@@ -216,6 +231,21 @@ public class DatabaseCommands {
         for (Movie movie : mediaList.getMovies()) {
             System.out.println(movie);
         }
+    }
+
+    @ShellMethod("Get all users")
+    public String listUsers() {
+        ArrayList<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            return "Found no users.";
+        }
+        return tablify("Users", users);
+    }
+
+    @ShellMethod("Log out")
+    public String logout() {
+        currentUser = null;
+        return "Logged out";
     }
 
     private User getUser(@ShellOption(defaultValue = "NONE") String username) {
