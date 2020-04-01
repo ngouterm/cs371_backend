@@ -49,7 +49,7 @@ public class DatabaseCommands {
 
     @ShellMethod("List all databases")
     public String listDbs() {
-        return tablify(null, databaseService.getExternalDatabases());
+        return tablify(databaseService.getExternalDatabases());
     }
 
     ArrayList<DatabaseService> databaseServices(String databases) {
@@ -75,6 +75,14 @@ public class DatabaseCommands {
 
         HashMap<DatabaseService, ArrayList<Movie>> results = databaseService.getMovieResults(query, databaseServices(database));
         recentResults = (ArrayList<Movie>) results.values().stream().flatMap(List::stream).collect(Collectors.toList());
+
+        if (results.keySet().isEmpty()) {
+            return "Could not find databases based on '" + database + "'.";
+        }
+        if (recentResults.isEmpty()) {
+            return "No results found";
+        }
+
         int startIndex = 1;
         for (DatabaseService dbs : results.keySet()) {
             if (!results.isEmpty()) {
@@ -263,7 +271,7 @@ public class DatabaseCommands {
                 return tablify(recentMediaList.getName(), recentMediaList.getMovies());
             default:
                 int i = Integer.parseInt(value);
-                return recentResults.get(i).toString();
+                return recentResults.get(i - 1).toString();
         }
     }
 }
