@@ -7,7 +7,7 @@ import com.example.thebigmoviebackend.model.User;
 import java.sql.*;
 import java.util.ArrayList;
 
-class RDSDatabaseHandle extends LocalDatabaseHandle {
+final class RDSDatabaseHandle implements DatabaseHandle {
     Connection connection = null;
 
     @Override
@@ -59,7 +59,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     while (resultSet.next()) {
                         String username = resultSet.getString("username");
                         String password = resultSet.getString("password");
-                        String userUUID = resultSet.getString("password");
+                        String userUUID = resultSet.getString("userUUID");
                         User user = new User(username, userUUID);
                         retVal.add(user);
                     }
