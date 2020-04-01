@@ -6,11 +6,10 @@ import com.example.thebigmoviebackend.model.User;
 
 import java.util.ArrayList;
 
-public class DatabaseManager implements StorageManager {
+public class DatabaseManager {
 
     private static DatabaseManager instance;
-    LocalDatabaseHandle localDatabaseHandle = new LocalDatabaseHandle();
-    ArrayList<RemoteDatabaseHandle> remoteDatabaseHandles = new ArrayList<>();
+    LocalDatabaseHandle localDatabaseHandle;
 
     private DatabaseManager() {
         connectDatabases();
@@ -28,26 +27,15 @@ public class DatabaseManager implements StorageManager {
         localDatabaseHandle = new RDSDatabaseHandle();
         localDatabaseHandle.connect();
 
-        for (RemoteDatabaseHandle databaseHandle : remoteDatabaseHandles) {
-            databaseHandle.connect();
-        }
     }
 
     public ArrayList<?> search(DataType dataType, String data) {
         ArrayList<?> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
-        //TODO implement remote search from databases or maybe remove since the other guys already implemented?
-//        for (RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles) {
-//            results.addAll(remoteDatabaseHandle.search(dataType, data));
-//        }
         return results;
     }
 
     public User getUser(String data) {
         return localDatabaseHandle.getUser(data);
-    }
-
-    public void save(DataType dataType, String data) {
-        localDatabaseHandle.save(dataType, data);
     }
 
     public void saveMovies(ArrayList<Movie> data) {

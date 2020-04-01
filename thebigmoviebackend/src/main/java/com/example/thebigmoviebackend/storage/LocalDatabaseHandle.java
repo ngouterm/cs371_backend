@@ -7,7 +7,7 @@ import com.example.thebigmoviebackend.model.User;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-class LocalDatabaseHandle extends  AbstractStorageHandle implements DatabaseHandle {
+abstract class LocalDatabaseHandle implements DatabaseHandle {
 
     public LocalDatabaseHandle(){
 
@@ -24,6 +24,7 @@ class LocalDatabaseHandle extends  AbstractStorageHandle implements DatabaseHand
 
         return null;
     }
+
 
     public User getUser(String data) {
         return null;

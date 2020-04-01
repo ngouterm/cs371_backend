@@ -297,7 +297,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         }
     }
 
-    //TODO Get all users
+    @Override
     public ArrayList<User> getUsers() {
         ArrayList<User> userList = new ArrayList<>();
         try {
@@ -319,7 +319,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         return userList;
     }
 
-    //TODO Get all Lists
+    @Override
     public ArrayList<MediaList> getAllLists() {
         ArrayList<MediaList> mediaLists = new ArrayList<>();
         ArrayList<User> users = getUsers();
@@ -329,7 +329,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         return mediaLists;
     }
 
-    //TODO Get all Media
+    @Override
     public ArrayList<Movie> getAllMedia() {
         ArrayList<Movie> allMedia = new ArrayList<>();
         try {
