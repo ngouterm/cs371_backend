@@ -3,6 +3,7 @@ package com.example.thebigmoviebackend.service;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
+import com.example.thebigmoviebackend.storage.DataType;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,10 @@ public class UserService {
 
     public void deleteMediaList(User user, MediaList mediaList) {
         databaseManager.deleteList(mediaList);
+    }
+
+    public ArrayList<User> searchUsers(String query) {
+        return (ArrayList<User>) databaseManager.search(DataType.USER, query);
     }
 
 }

@@ -11,8 +11,7 @@ public class InternalDatabaseService implements DatabaseService {
 
     @Override
     public ArrayList<Movie> getMovieResults(String query) {
-        ArrayList<Movie> movies = (ArrayList<Movie>)databaseManager.search(DataType.MOVIE, query);
-        return movies;
+        return (ArrayList<Movie>)databaseManager.search(DataType.MOVIE, query);
     }
 
     public void saveMovies(ArrayList<Movie> movies) {
