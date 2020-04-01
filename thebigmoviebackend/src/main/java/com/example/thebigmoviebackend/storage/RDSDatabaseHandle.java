@@ -59,7 +59,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     while (resultSet.next()) {
                         String username = resultSet.getString("username");
                         String password = resultSet.getString("password");
-                        String userUUID = resultSet.getString("password");
+                        String userUUID = resultSet.getString("userUUID");
                         User user = new User(username, userUUID);
                         retVal.add(user);
                     }
@@ -307,7 +307,7 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
             while (resultSet.next()) {
                 String username = resultSet.getString("username");
                 String password = resultSet.getString("password");
-                String userUUID = resultSet.getString("password");
+                String userUUID = resultSet.getString("userUUID");
                 User user = new User(username, userUUID);
                 userList.add(user);
             }
