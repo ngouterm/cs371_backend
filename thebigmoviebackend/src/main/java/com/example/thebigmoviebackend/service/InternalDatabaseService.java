@@ -17,4 +17,9 @@ public class InternalDatabaseService implements DatabaseService {
     public void saveMovies(ArrayList<Movie> movies) {
         databaseManager.saveMovies(movies);
     }
+
+    @Override
+    public String toString() {
+        return "internal database";
+    }
 }
