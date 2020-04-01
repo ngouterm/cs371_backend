@@ -6,8 +6,9 @@ import com.example.thebigmoviebackend.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
-final class RDSDatabaseHandle implements DatabaseHandle {
+final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
     Connection connection = null;
 
     @Override
@@ -33,16 +34,6 @@ final class RDSDatabaseHandle implements DatabaseHandle {
             }
         }
         return connection;
-    }
-
-    @Override
-    public void prepare() {
-
-    }
-
-    @Override
-    public void save(DataType dataType, String data) {
-
     }
 
     @Override
@@ -111,6 +102,7 @@ final class RDSDatabaseHandle implements DatabaseHandle {
         return null;
     }
 
+    @Override
     public User getUser(String data) {
 
         String userName = "";
@@ -141,7 +133,7 @@ final class RDSDatabaseHandle implements DatabaseHandle {
     }
 
     @Override
-    public void saveMovies(ArrayList<Movie> data) {
+    public void saveMovies(List<Movie> data) {
         Connection connection = connect();
         for (Movie movie : data) {
             String query = "INSERT INTO MEDIA (title, voteAverage, voteCount, video, posterPath,remoteId,adult,backgroundPath,originalLanguage,originalTitle,genreIds,overview,releaseDate, mediaUUID)"
@@ -298,7 +290,7 @@ final class RDSDatabaseHandle implements DatabaseHandle {
     }
 
     @Override
-    public ArrayList<User> getUsers() {
+    public ArrayList<User> getAllUsers() {
         ArrayList<User> userList = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS ");
@@ -319,10 +311,11 @@ final class RDSDatabaseHandle implements DatabaseHandle {
         return userList;
     }
 
+
     @Override
     public ArrayList<MediaList> getAllLists() {
         ArrayList<MediaList> mediaLists = new ArrayList<>();
-        ArrayList<User> users = getUsers();
+        ArrayList<User> users = new ArrayList<>(getAllUsers());
         for (User user : users) {
             mediaLists.addAll(getLists(user));
         }
