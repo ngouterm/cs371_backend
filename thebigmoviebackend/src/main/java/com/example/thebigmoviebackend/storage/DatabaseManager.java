@@ -33,11 +33,12 @@ public class DatabaseManager implements StorageManager {
         }
     }
 
-    public ArrayList<Movie> search(DataType dataType, String data) {
-        ArrayList<Movie> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
-        for (RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles) {
-            results.addAll(remoteDatabaseHandle.search(dataType, data));
-        }
+    public ArrayList<?> search(DataType dataType, String data) {
+        ArrayList<?> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
+        //TODO implement remote search from databases or maybe remove since the other guys already implemented?
+//        for (RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles) {
+//            results.addAll(remoteDatabaseHandle.search(dataType, data));
+//        }
         return results;
     }
 

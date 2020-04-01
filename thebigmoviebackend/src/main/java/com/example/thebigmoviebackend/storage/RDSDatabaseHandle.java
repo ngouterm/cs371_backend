@@ -46,17 +46,50 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
     }
 
     @Override
-    public ArrayList<Movie> search(DataType dataType, String data) {
-        ArrayList<Movie> moviesToReturn = new ArrayList<>();
+    public ArrayList<?> search(DataType dataType, String data) {
+        ArrayList<Object> retVal = new ArrayList<>();
         switch (dataType) {
             case USER:
+                try {
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS WHERE username LIKE ?");
+                    statement.setString(1, "%" + data + "%");
+                    ResultSet resultSet = statement.executeQuery();
+                    statement.clearParameters();
+
+                    while (resultSet.next()) {
+                        String username = resultSet.getString("username");
+                        String password = resultSet.getString("password");
+                        String userUUID = resultSet.getString("password");
+                        User user = new User(username, userUUID);
+                        retVal.add(user);
+                    }
+                    return retVal;
+                } catch (Exception e) {
+                    System.err.println("Got an exception! ");
+                    System.err.println(e.getMessage());
+                }
                 break;
+
             case LIST:
+//                try {
+//                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE title LIKE ?");
+//                    statement.setString(1, "%" + data + "%");
+//                    ResultSet resultSet = statement.executeQuery();
+//                    statement.clearParameters();
+//
+//                    while (resultSet.next()) {
+//                        String uuid = resultSet.getString("mediaListUUID");
+//                        String title = resultSet.getString("listTitle");
+//                        MediaList mediaList = new MediaList(user, title, uuid);
+//                    }
+//                    return retVal;
+//                } catch (Exception e) {
+//                    System.err.println("Got an exception! ");
+//                    System.err.println(e.getMessage());
+//                }
                 break;
             case MOVIE: {
                 try {
-                    Connection conn = connect();
-
                     PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE title LIKE ?");
                     statement.setString(1, "%" + data + "%");
                     ResultSet resultSet = statement.executeQuery();
@@ -65,17 +98,15 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
                     while (resultSet.next()) {
                         Movie movie = new Movie(resultSet.getString("title"));
                         movie.setUuid(resultSet.getString("mediaUUID"));
-                        moviesToReturn.add(movie);
+                        retVal.add(movie);
                     }
-                    return moviesToReturn;
+                    return retVal;
                 } catch (Exception e) {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
                 break;
             }
-            case ACTOR:
-                break;
         }
         return null;
     }
@@ -266,6 +297,65 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         }
     }
 
+    //TODO Get all users
+    public ArrayList<User> getUsers() {
+        ArrayList<User> userList = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS ");
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+            while (resultSet.next()) {
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                String userUUID = resultSet.getString("password");
+                User user = new User(username, userUUID);
+                userList.add(user);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
+    //TODO Get all Lists
+    public ArrayList<MediaList> getAllLists() {
+        ArrayList<MediaList> mediaLists = new ArrayList<>();
+        ArrayList<User> users = getUsers();
+        for (User user : users) {
+            mediaLists.addAll(getLists(user));
+        }
+        return mediaLists;
+    }
+
+    //TODO Get all Media
+    public ArrayList<Movie> getAllMedia() {
+        ArrayList<Movie> allMedia = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM MEDIALIST ml";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                String mediaTitle;
+                String mediaUUID;
+                String releaseDate;
+                mediaTitle = resultSet.getString("title");
+                mediaUUID = resultSet.getString("mediaUUID");
+                releaseDate = resultSet.getString("releaseDate");
+                Movie movie = new Movie(mediaTitle);
+                movie.setUuid(mediaUUID);
+                movie.setReleaseDate(releaseDate);
+                allMedia.add(movie);
+            }
+            resultSet.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allMedia;
+    }
+
     @Override
     public ArrayList<MediaList> getLists(User user) {
         ArrayList<MediaList> mediaListArrayList = new ArrayList<>();
@@ -287,9 +377,9 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        try{
-            for(MediaList mediaList : mediaListArrayList) {
-                String query = "SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = "+ "'" + mediaList.getUUID()  + "'";
+        try {
+            for (MediaList mediaList : mediaListArrayList) {
+                String query = "SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = " + "'" + mediaList.getUUID() + "'";
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(query);
 
@@ -311,7 +401,6 @@ class RDSDatabaseHandle extends LocalDatabaseHandle {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
 
         return null;

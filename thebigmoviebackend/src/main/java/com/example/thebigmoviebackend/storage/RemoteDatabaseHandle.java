@@ -13,7 +13,7 @@ class RemoteDatabaseHandle implements DatabaseHandle {
     }
 
     @Override
-    public ArrayList<Movie> search(DataType dataType, String data) {
+    public ArrayList<?> search(DataType dataType, String data) {
         return null;
     }
 

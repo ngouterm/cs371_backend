@@ -20,7 +20,7 @@ class LocalDatabaseHandle extends  AbstractStorageHandle implements DatabaseHand
     }
 
     @Override
-    public ArrayList<Movie> search(DataType dataType, String data) {
+    public ArrayList<?> search(DataType dataType, String data) {
 
         return null;
     }
