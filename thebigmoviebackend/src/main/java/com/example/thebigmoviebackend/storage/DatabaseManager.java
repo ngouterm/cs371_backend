@@ -98,11 +98,17 @@ public class DatabaseManager {
         return users;
     };
 
+    /**
+     * @return All MediaLists across application databases
+     */
     public ArrayList<MediaList> getAllLists(){
         ArrayList<MediaList> lists = new ArrayList<>(localDatabaseHandle.getAllLists());
         return lists;
     };
 
+    /**
+     * @return All Media across application databases
+     */
     public ArrayList<Movie> getAllMedia(){
         ArrayList<Movie> media = new ArrayList<>(localDatabaseHandle.getAllMedia());
         return media;
