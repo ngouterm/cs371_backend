@@ -7,7 +7,7 @@ import com.example.thebigmoviebackend.model.User;
 import java.sql.*;
 import java.util.ArrayList;
 
-class RDSDatabaseHandle extends LocalDatabaseHandle {
+final class RDSDatabaseHandle implements DatabaseHandle {
     Connection connection = null;
 
     @Override

@@ -6,9 +6,12 @@ import com.example.thebigmoviebackend.model.User;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
 
+/**
+ * Interface to ensure all databases are able to utalize the same functions
+ */
 interface DatabaseHandle {
+
     Connection connect();
 
     ArrayList<?> search(DataType dataType, String data);
