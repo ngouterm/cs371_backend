@@ -103,7 +103,7 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
     }
 
     @Override
-    public User getUser(String data) {
+    public User getUserByUsername(String data) {
 
         String userName = "";
         String password;
@@ -120,6 +120,102 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
                 userName = resultSet.getString("username");
                 password = resultSet.getString("password");
                 uuid = resultSet.getString("userUUID");
+            }
+            if (!userName.equals("") && !uuid.equals("")) {
+                return new User(userName, uuid);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public MediaList getMediaListByUUID(String uuid) {
+        MediaList mediaList = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIALIST_LOOKUP mll JOIN USERS u ON mll.idUser = u.idUser JOIN MEDIALIST ml ON mll.mediaListUUID = ml.mediaListUUID WHERE mll.mediaListUUID = ?");
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+            String title;
+            while (resultSet.next()) {
+                User user = getUserByUUID(resultSet.getString("userUUID"));
+                title = resultSet.getString("listTitle");
+                mediaList = new MediaList(user, title, uuid);
+
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            String query = "SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = " + "'" + mediaList.getUUID() + "'";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String mediaTitle;
+                String mediaUUID;
+                String releaseDate;
+                mediaTitle = resultSet.getString("title");
+                mediaUUID = resultSet.getString("mediaUUID");
+                releaseDate = resultSet.getString("releaseDate");
+                Movie movie = new Movie(mediaTitle);
+                movie.setUuid(mediaUUID);
+                movie.setReleaseDate(releaseDate);
+                mediaList.addMovie(movie);
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mediaList;
+    }
+
+
+
+    @Override
+    public Movie getMovieByUUID(String uuid) {
+        Movie retVal = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE mediaUUID = ?");
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+
+            while (resultSet.next()) {
+                Movie movie = new Movie(resultSet.getString("title"));
+                movie.setUuid(resultSet.getString("mediaUUID"));
+                retVal = movie;
+            }
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return retVal;
+    }
+
+    @Override
+    public User getUserByUUID(String uuid) {
+
+        String userName = "";
+        String password;
+
+        try {
+            Connection conn = connect();
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS WHERE userUUID = ?");
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+
+            while (resultSet.next()) {
+                userName = resultSet.getString("username");
+                password = resultSet.getString("password");
             }
             if (!userName.equals("") && !uuid.equals("")) {
                 return new User(userName, uuid);

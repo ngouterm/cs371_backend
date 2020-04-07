@@ -25,6 +25,12 @@ interface ApplicationDatabaseHandle {
      */
     List<?> search(DataType dataType, String data);
 
+    MediaList getMediaListByUUID(String uuid);
+
+    Movie getMovieByUUID(String uuid);
+
+    User getUserByUUID(String data);
+
     /**
      * @param data List of media that is to be saves
      * Save all media that is passed
@@ -42,7 +48,7 @@ interface ApplicationDatabaseHandle {
      * @return returns a single users based on username search results
      * Returns a single user
      */
-    User getUser(String data);
+    User getUserByUsername(String data);
 
     /**
      * @param user User who owns the lsits
