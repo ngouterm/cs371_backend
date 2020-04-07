@@ -25,14 +25,29 @@ interface ApplicationDatabaseHandle {
      */
     List<?> search(DataType dataType, String data);
 
+    /**
+     * @param uuid Pass the MediaList of the movie you wish to get
+     * @return returns a MediaList from the local database that the uuid matches
+     * Only one MediaList or null will be returned
+     */
     MediaList getMediaListByUUID(String uuid);
 
+    /**
+     * @param uuid Pass the uuid of the movie you wish to get
+     * @return returns a movie from the local database that the uuid matches
+     * Only one movie or null will be returned
+     */
     Movie getMovieByUUID(String uuid);
 
-    User getUserByUUID(String data);
+    /**
+     * @param uuid Pass the uuid of the user you wish to get
+     * @return returns a user from the local database that the uuid matches
+     * Only one user or null will be returned
+     */
+    User getUserByUUID(String uuid);
 
     /**
-     * @param data List of media that is to be saves
+     * @param data List of media that is to be saved
      * Save all media that is passed
      */
     void saveMovies(List<Movie> data);
