@@ -17,7 +17,7 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 - echo: Echo locally stored values
     - params [value]
     - value accepts the following values
-        - user - returns the username of the current user
+        - user - returns the current user
         - search - returns the list of the most recent search results
         - list - returns the most recent list
         - \<int> - returns the value index from the most recent search results. 

@@ -57,4 +57,12 @@ public class MixedDatabaseService implements DatabaseService {
     public ArrayList<MediaList> getAllLists() {
         return internalDatabaseService.getAllLists();
     }
+
+    public Movie getMovie(String uuid) {
+        return internalDatabaseService.getMovie(uuid);
+    }
+
+    public MediaList getMediaList(String uuid) {
+        return internalDatabaseService.getMediaList(uuid);
+    }
 }

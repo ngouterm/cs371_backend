@@ -58,7 +58,12 @@ public class MediaList {
 
     @Override
     public String toString() {
-        return name;
+        return "MediaList{" +
+                "user=" + user +
+                ", movies=" + movies +
+                ", name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                '}';
     }
 
     public String getUUID(){return uuid;}

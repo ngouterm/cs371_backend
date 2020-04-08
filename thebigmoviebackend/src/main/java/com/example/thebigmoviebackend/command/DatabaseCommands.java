@@ -303,7 +303,7 @@ public class DatabaseCommands {
     public String echo(String value) {
         switch (value) {
             case "user":
-                return currentUser.getUsername();
+                return currentUser.toString();
             case "search":
                 return tablify("Recent results", recentResults, true, 1);
             case "list":

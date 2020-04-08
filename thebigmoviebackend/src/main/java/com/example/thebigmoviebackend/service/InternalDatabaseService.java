@@ -31,4 +31,12 @@ public class InternalDatabaseService implements DatabaseService {
     public ArrayList<MediaList> getAllLists() {
         return databaseManager.getAllLists();
     }
+
+    public Movie getMovie(String uuid) {
+        return databaseManager.getMovieByUUID(uuid);
+    }
+
+    public MediaList getMediaList(String uuid) {
+        return databaseManager.getMediaListByUUID(uuid);
+    }
 }

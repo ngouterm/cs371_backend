@@ -70,4 +70,8 @@ public class UserService {
     public ArrayList<User> getAllUsers() {
         return databaseManager.getAllUsers();
     }
+
+    public User getUser(String uuid) {
+        return databaseManager.getUserByUUID(uuid);
+    }
 }

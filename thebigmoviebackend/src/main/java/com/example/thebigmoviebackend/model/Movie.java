@@ -168,9 +168,9 @@ public class Movie {
     @Override
     public String toString() {
         if (releaseDate == null || releaseDate.isEmpty()) {
-            return title;
+            return title + " [" + uuid + "]";
         } else {
-            return title + " (" + releaseDate + ")";
+            return title + " (" + releaseDate + ") [" + uuid + "]";
         }
     }
 }
