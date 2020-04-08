@@ -70,7 +70,7 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 - search: Search for a movie, television show, or actor.
     - params: query [-db database]
-    - if db is 'all' or excluded, then defaults to searching all databases. 
+    - if db is 'all' or excluded, then defaults to searching all databases. For multiple dbs, separate by comma
 
 - search-users: Search for a user
     - params: query
