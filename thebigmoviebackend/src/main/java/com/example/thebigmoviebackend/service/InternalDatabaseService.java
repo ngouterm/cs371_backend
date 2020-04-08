@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.service;
 
+import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.storage.DataType;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
@@ -11,10 +12,23 @@ public class InternalDatabaseService implements DatabaseService {
 
     @Override
     public ArrayList<Movie> getMovieResults(String query) {
-        return databaseManager.search(DataType.MOVIE, query);
+        return (ArrayList<Movie>)databaseManager.search(DataType.MOVIE, query);
     }
 
     public void saveMovies(ArrayList<Movie> movies) {
         databaseManager.saveMovies(movies);
+    }
+
+    @Override
+    public String toString() {
+        return "internal database";
+    }
+
+    public ArrayList<Movie> getAllMovies() {
+        return databaseManager.getAllMedia();
+    }
+
+    public ArrayList<MediaList> getAllLists() {
+        return databaseManager.getAllLists();
     }
 }

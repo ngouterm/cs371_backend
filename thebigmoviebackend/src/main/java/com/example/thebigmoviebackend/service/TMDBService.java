@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TMDBService implements DatabaseService {
-    TmdbApi tmdbApi = new TmdbApi("5d93339e310ea272a10acef74057cec2");
+//    TmdbApi tmdbApi = new TmdbApi("5d93339e310ea272a10acef74057cec2");
+    TmdbApi tmdbApi = new TmdbApi("1f224e9da2022438784455ffb9a43119");
 
     @Override
     public ArrayList<Movie> getMovieResults(String query) {

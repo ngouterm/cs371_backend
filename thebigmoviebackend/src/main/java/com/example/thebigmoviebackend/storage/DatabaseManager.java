@@ -5,12 +5,17 @@ import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class DatabaseManager implements StorageManager {
+/**
+ * Instance of the primary connection to the databases
+ * At this time we only connect to a AWS RDS database
+ * This is so one action can action all connected application databases
+ */
+public class DatabaseManager {
 
     private static DatabaseManager instance;
-    LocalDatabaseHandle localDatabaseHandle = new LocalDatabaseHandle();
-    ArrayList<RemoteDatabaseHandle> remoteDatabaseHandles = new ArrayList<>();
+    ApplicationDatabaseHandle localDatabaseHandle;
 
     private DatabaseManager() {
         connectDatabases();
@@ -28,42 +33,114 @@ public class DatabaseManager implements StorageManager {
         localDatabaseHandle = new RDSDatabaseHandle();
         localDatabaseHandle.connect();
 
-        for (RemoteDatabaseHandle databaseHandle : remoteDatabaseHandles) {
-            databaseHandle.connect();
-        }
     }
 
-    public ArrayList<Movie> search(DataType dataType, String data) {
-        ArrayList<Movie> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
-        for (RemoteDatabaseHandle remoteDatabaseHandle : remoteDatabaseHandles) {
-            results.addAll(remoteDatabaseHandle.search(dataType, data));
-        }
+    /**
+     * @param dataType enum that impacts where we will search
+     * @param data the search string
+     * @return returns a generic Arraylist of the results
+     * Searches across all application databases
+     */
+    public ArrayList<?> search(DataType dataType, String data) {
+        ArrayList<?> results = new ArrayList<>(localDatabaseHandle.search(dataType, data));
         return results;
     }
 
+    /**
+     * @param data user search string i.e. username
+     * @return first matching user
+     * TODO switch this to use a UUID to guarantee uniqueness and match
+     */
     public User getUser(String data) {
-        return localDatabaseHandle.getUser(data);
+        return localDatabaseHandle.getUserByUsername(data);
     }
 
-    public void save(DataType dataType, String data) {
-        localDatabaseHandle.save(dataType, data);
-    }
-
-    public void saveMovies(ArrayList<Movie> data) {
+    /**
+     * @param data list of media that you want to save to application databases
+     */
+    public void saveMovies(List<Movie> data) {
         localDatabaseHandle.saveMovies(data);
     }
 
+    /**
+     * @param data User to save to application databases
+     */
     public void saveUser(User data) {
         localDatabaseHandle.saveUser(data);
     }
 
+    /**
+     * @param mediaList MediaList to save to application databases
+     */
     public void saveList(MediaList mediaList) {
         localDatabaseHandle.saveList(mediaList);
     }
 
+    /**
+     * @param user User who lists you want
+     * @return ArrayList of MediaLists for the User passed across application databases
+     */
     public ArrayList<MediaList> getLists(User user) {
-        return localDatabaseHandle.getLists(user);
+        ArrayList<MediaList> lists = new ArrayList<>(localDatabaseHandle.getLists(user));
+        return lists;
     }
 
+    /**
+     * @param mediaList MediaList to from the application databases
+     */
     public void deleteList(MediaList mediaList) { localDatabaseHandle.deleteList(mediaList);}
+
+    /**
+     * @return All Users across application databases
+     */
+    public ArrayList<User> getAllUsers(){
+        ArrayList<User> users = new ArrayList<>(localDatabaseHandle.getAllUsers());
+        return users;
+    }
+
+    /**
+     * @return All MediaLists across application databases
+     */
+    public ArrayList<MediaList> getAllLists(){
+        ArrayList<MediaList> lists = new ArrayList<>(localDatabaseHandle.getAllLists());
+        return lists;
+    }
+
+    /**
+     * @return All Media across application databases
+     */
+    public ArrayList<Movie> getAllMedia(){
+        ArrayList<Movie> media = new ArrayList<>(localDatabaseHandle.getAllMedia());
+        return media;
+    }
+
+    /**
+     * @param uuid Pass the uuid of the movie you wish to get
+     * @return returns a movie from the local database that the uuid matches
+     * Only one movie or null will be returned
+     */
+    public Movie getMovieByUUID(String uuid){
+        Movie movie = localDatabaseHandle.getMovieByUUID(uuid);
+        return movie;
+    }
+
+    /**
+     * @param uuid Pass the uuid of the user you wish to get
+     * @return returns a user from the local database that the uuid matches
+     * Only one user or null will be returned
+     */
+    public User getUserByUUID(String uuid){
+        User user = localDatabaseHandle.getUserByUUID(uuid);
+        return user;
+    }
+
+    /**
+     * @param uuid Pass the uuid of the MediaList you wish to get
+     * @return returns a MediaList from the local database that the uuid matches
+     * Only one MediaList or null will be returned
+     */
+    public MediaList getMediaListByUUID(String uuid){
+        MediaList mediaList = localDatabaseHandle.getMediaListByUUID(uuid);
+        return mediaList;
+    }
 }

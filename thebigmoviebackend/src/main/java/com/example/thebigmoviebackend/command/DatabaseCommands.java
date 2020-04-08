@@ -1,11 +1,9 @@
 package com.example.thebigmoviebackend.command;
 
-import com.example.thebigmoviebackend.model.ExternalDatabase;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.service.DatabaseService;
-import com.example.thebigmoviebackend.service.InternalDatabaseService;
 import com.example.thebigmoviebackend.service.MixedDatabaseService;
 import com.example.thebigmoviebackend.service.UserService;
 import org.jline.reader.LineReader;
@@ -20,8 +18,9 @@ import org.springframework.shell.table.TableBuilder;
 import org.springframework.shell.table.TableModel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ShellComponent
 public class DatabaseCommands {
@@ -47,29 +46,72 @@ public class DatabaseCommands {
 
     @ShellMethod("List all databases")
     public String listDbs() {
-        return tablify(null, databaseService.getExternalDatabases(), false);
+        return tablify(databaseService.getExternalDatabases());
+    }
+
+    ArrayList<DatabaseService> databaseServices(String databases) {
+        if (databases.equals(allDatabases)) {
+            return new ArrayList<>(databaseService.getDatabases().values());
+        }
+
+        ArrayList<DatabaseService> services = new ArrayList<>();
+        String[] dbs = databases.split(",");
+        for (String db : dbs) {
+            DatabaseService service = databaseService.getDatabases().get(db);
+            if (service != null) {
+                services.add(service);
+            }
+        }
+
+        return services;
     }
 
     @ShellMethod("Search for a movie, television show, or actor.")
     public String search(String query, @ShellOption(value = {"-db"}, defaultValue = allDatabases) String database) {
         String message = "You searched for '" + query + "'\n\n";
 
-        ArrayList<Movie> results = databaseService.getMovieResults(query);
-        recentResults = results;
-        if (!results.isEmpty()) {
-            message = message.concat("We got the following results:\n");
+        HashMap<DatabaseService, ArrayList<Movie>> results = databaseService.getMovieResults(query, databaseServices(database));
+        recentResults = (ArrayList<Movie>) results.values().stream().flatMap(List::stream).collect(Collectors.toList());
 
-            message = message.concat(tablify(null, results, true));
+        if (results.keySet().isEmpty()) {
+            return "Could not find databases based on '" + database + "'.";
+        }
+        if (recentResults.isEmpty()) {
+            return "No results found";
+        }
 
-            message = message.concat("To save a result, call 'save x' where x is the number next to the movie.");
-        } else {
-            message = message.concat("No results found.");
+        int startIndex = 1;
+        for (DatabaseService dbs : results.keySet()) {
+            if (!results.isEmpty()) {
+                message = message.concat(tablify(dbs.toString(), results.get(dbs), true, startIndex));
+                startIndex += results.get(dbs).size();
+            } else {
+                message = message.concat("No results found.");
+            }
         }
 
         return message;
     }
 
-    public <T> String tablify(String title, List<T> list, boolean includeIndices) {
+    @ShellMethod("Search for a user")
+    public String searchUsers(String query) {
+        ArrayList<User> results = userService.searchUsers(query);
+        if (results.isEmpty()) {
+            return "Found no results.";
+        }
+        return tablify("Found the following users: ", userService.searchUsers(query));
+    }
+
+    public <T> String tablify(List<T> list) {
+        return tablify(null, list, false, 1);
+    }
+
+    public <T> String tablify(String title, List<T> list) {
+        return tablify(title, list, false, 1);
+    }
+
+
+    public <T> String tablify(String title, List<T> list, boolean includeIndices, int startIndex) {
         int offset = title == null ? 0 : 1;
 
         Object[][] table = new Object[list.size() + offset][includeIndices ? 2 : 1];
@@ -78,7 +120,7 @@ public class DatabaseCommands {
         }
         for (int i = 0; i < list.size(); i++) {
             if (includeIndices) {
-                table[i + offset][0] = i + 1;
+                table[i + offset][0] = i + startIndex;
                 table[i + offset][1] = list.get(i);
             } else {
                 table[i + offset][0] = list.get(i);
@@ -150,7 +192,25 @@ public class DatabaseCommands {
         User user = getUser(username);
         ArrayList<MediaList> mediaLists = userService.getMediaLists(user);
 
-        return tablify("Lists by " + user, mediaLists, false);
+        return tablify("Lists by " + user, mediaLists);
+    }
+
+    @ShellMethod("List all movies in internal database")
+    public String listMovies() {
+        ArrayList<Movie> movies = databaseService.getAllMovies();
+        if (movies.isEmpty()) {
+            return "No movies.";
+        }
+        return tablify("Found these movies.", movies);
+    }
+
+    @ShellMethod("List all lists")
+    public String listAll() {
+        ArrayList<MediaList> lists = databaseService.getAllLists();
+        if (lists.isEmpty()) {
+            return "No lists.";
+        }
+        return tablify("Found these lists.", lists);
     }
 
     @ShellMethod("Make list")
@@ -171,6 +231,21 @@ public class DatabaseCommands {
         for (Movie movie : mediaList.getMovies()) {
             System.out.println(movie);
         }
+    }
+
+    @ShellMethod("Get all users")
+    public String listUsers() {
+        ArrayList<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            return "Found no users.";
+        }
+        return tablify("Users", users);
+    }
+
+    @ShellMethod("Log out")
+    public String logout() {
+        currentUser = null;
+        return "Logged out";
     }
 
     private User getUser(@ShellOption(defaultValue = "NONE") String username) {
@@ -222,5 +297,20 @@ public class DatabaseCommands {
             userService.deleteMediaList(currentUser, mediaList);
             return "Deleted list.";
         });
+    }
+
+    @ShellMethod("Echo locally stored values")
+    public String echo(String value) {
+        switch (value) {
+            case "user":
+                return currentUser.getUsername();
+            case "search":
+                return tablify("Recent results", recentResults, true, 1);
+            case "list":
+                return tablify(recentMediaList.getName(), recentMediaList.getMovies());
+            default:
+                int i = Integer.parseInt(value);
+                return recentResults.get(i - 1).toString();
+        }
     }
 }
