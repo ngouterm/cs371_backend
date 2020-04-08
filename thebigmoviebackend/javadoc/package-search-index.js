@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.example.thebigmoviebackend"},{"l":"com.example.thebigmoviebackend.command"},{"l":"com.example.thebigmoviebackend.model"},{"l":"com.example.thebigmoviebackend.service"},{"l":"com.example.thebigmoviebackend.storage"}]
