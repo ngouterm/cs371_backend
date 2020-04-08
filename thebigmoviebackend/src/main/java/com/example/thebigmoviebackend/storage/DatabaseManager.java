@@ -52,7 +52,7 @@ public class DatabaseManager {
      * TODO switch this to use a UUID to guarantee uniqueness and match
      */
     public User getUser(String data) {
-        return localDatabaseHandle.getUser(data);
+        return localDatabaseHandle.getUserByUsername(data);
     }
 
     /**
@@ -96,7 +96,7 @@ public class DatabaseManager {
     public ArrayList<User> getAllUsers(){
         ArrayList<User> users = new ArrayList<>(localDatabaseHandle.getAllUsers());
         return users;
-    };
+    }
 
     /**
      * @return All MediaLists across application databases
@@ -104,7 +104,7 @@ public class DatabaseManager {
     public ArrayList<MediaList> getAllLists(){
         ArrayList<MediaList> lists = new ArrayList<>(localDatabaseHandle.getAllLists());
         return lists;
-    };
+    }
 
     /**
      * @return All Media across application databases
@@ -112,5 +112,35 @@ public class DatabaseManager {
     public ArrayList<Movie> getAllMedia(){
         ArrayList<Movie> media = new ArrayList<>(localDatabaseHandle.getAllMedia());
         return media;
-    };
+    }
+
+    /**
+     * @param uuid Pass the uuid of the movie you wish to get
+     * @return returns a movie from the local database that the uuid matches
+     * Only one movie or null will be returned
+     */
+    public Movie getMovieByUUID(String uuid){
+        Movie movie = localDatabaseHandle.getMovieByUUID(uuid);
+        return movie;
+    }
+
+    /**
+     * @param uuid Pass the uuid of the user you wish to get
+     * @return returns a user from the local database that the uuid matches
+     * Only one user or null will be returned
+     */
+    public User getUserByUUID(String uuid){
+        User user = localDatabaseHandle.getUserByUUID(uuid);
+        return user;
+    }
+
+    /**
+     * @param uuid Pass the uuid of the MediaList you wish to get
+     * @return returns a MediaList from the local database that the uuid matches
+     * Only one MediaList or null will be returned
+     */
+    public MediaList getMediaListByUUID(String uuid){
+        MediaList mediaList = localDatabaseHandle.getMediaListByUUID(uuid);
+        return mediaList;
+    }
 }
