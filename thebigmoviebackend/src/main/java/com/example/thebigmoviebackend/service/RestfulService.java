@@ -3,10 +3,8 @@ package com.example.thebigmoviebackend.service;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +23,15 @@ public class RestfulService {
     @GetMapping("/user/")
     public ArrayList<User> user() {
         return userService.getAllUsers();
+    }
+
+    /**
+     * @param user user to create
+     * @return whether the user was created
+     */
+    @PostMapping("/user/")
+    public boolean createUser(User user) {
+        return userService.createUser(user);
     }
 
     /**
@@ -122,6 +129,17 @@ public class RestfulService {
     }
 
     /**
+     * Creates a list of movies
+     * @param list list to save
+     * @return whether the list was created
+     */
+    @PostMapping("list/")
+    public boolean createList(MediaList list) {
+        userService.saveMediaList(list);
+        return true;
+    }
+
+    /**
      * @param userid userid who lists you want
      * @return ArrayList of MediaLists for the User passed across application databases
      */
@@ -140,5 +158,21 @@ public class RestfulService {
     public MediaList userList(@PathVariable String userid, @RequestParam String name) {
         User user = userService.getUser(userid);
         return userService.getMediaList(user, name);
+    }
+
+    /**
+     * Deletes a medialist
+     * @param mediaList list to delete
+     * @param userid user auth for the medialist
+     * @return whether the list was deleted.
+     */
+    @DeleteMapping("/list")
+    public boolean deleteList(MediaList mediaList, @RequestParam String userid) {
+        User user = userService.getUser(userid);
+        if (mediaList.getUser().equals(user)) {
+            userService.deleteMediaList(user, mediaList);
+            return true;
+        }
+        return false;
     }
 }

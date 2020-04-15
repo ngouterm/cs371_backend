@@ -9,6 +9,10 @@ public class User {
     String email = "";
     String uuid;
 
+    public User() {
+
+    }
+
     public User(String username) {
         this.username = username;
         this.uuid = UUID.randomUUID().toString();
@@ -40,7 +44,9 @@ public class User {
         return password;
     }
 
-    public String getUuid(){ return uuid;}
+    public String getUuid() {
+        return uuid;
+    }
 
     @Override
     public String toString() {

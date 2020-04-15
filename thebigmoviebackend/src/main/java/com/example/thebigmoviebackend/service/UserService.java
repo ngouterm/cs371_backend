@@ -35,6 +35,15 @@ public class UserService {
         return false;
     }
 
+    public boolean createUser(User user) {
+        User temp = databaseManager.getUser(user.getUsername());
+        if (temp == null) {
+            databaseManager.saveUser(user);
+            return true;
+        }
+        return false;
+    }
+
     public User login(String username, String password) {
         //TODO: implement password check
         return databaseManager.getUser(username);

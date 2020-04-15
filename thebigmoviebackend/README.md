@@ -75,3 +75,38 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 - search-users: Search for a user
     - params: query
 
+## REST API
+
+### GET requests
+
+`/user` Get all users
+
+`/user?username=[someusername]` Search users by username
+
+`/user/id/` Get a specific user
+
+`/user/id/list` Get all lists from a specific user
+
+`/user/id/list?name=[somelistname]` Get a specific list by a user by name
+
+`/list` Get all lists
+
+`/list/id/` Get a specific list
+
+`/movie` Get all movies in the internal db
+
+`/movie?title=[sometitle]` Search all dbs for a movie
+
+`/movie?title=[sometitle]&dbs=[somedbs]` Search specific dbs for movie
+
+`/movie/id/` Get a specific movie from the internal db (used for reference with lists)
+
+### POST requests
+
+`/user` Create user
+
+`/list` Create list
+
+### DELETE requests
+
+`/list?userid=[useridforlist]` Delete list. User must be the user for the corresponding list.
