@@ -62,22 +62,48 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
                 break;
 
             case LIST:
-//                try {
-//                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIA WHERE title LIKE ?");
-//                    statement.setString(1, "%" + data + "%");
-//                    ResultSet resultSet = statement.executeQuery();
-//                    statement.clearParameters();
-//
-//                    while (resultSet.next()) {
-//                        String uuid = resultSet.getString("mediaListUUID");
-//                        String title = resultSet.getString("listTitle");
-//                        MediaList mediaList = new MediaList(user, title, uuid);
-//                    }
-//                    return retVal;
-//                } catch (Exception e) {
-//                    System.err.println("Got an exception! ");
-//                    System.err.println(e.getMessage());
-//                }
+                MediaList mediaList = null;
+                try {
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM MEDIALIST_LOOKUP mll JOIN USERS u ON mll.idUser = u.idUser JOIN MEDIALIST ml ON mll.mediaListUUID = ml.mediaListUUID WHERE mll.listTitle LIKE ?");
+                    statement.setString(1, "%" + data + "%");;
+                    ResultSet resultSet = statement.executeQuery();
+                    statement.clearParameters();
+                    String title;
+                    while (resultSet.next()) {
+                        User user = getUserByUUID(resultSet.getString("userUUID"));
+                        title = resultSet.getString("listTitle");
+                        String uuid = resultSet.getString("mediaListUUID");
+                        mediaList = new MediaList(user, title, uuid);
+
+                    }
+                    resultSet.close();
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String query = "SELECT * FROM MEDIALIST ml JOIN MEDIA m ON ml.idMedia = m.idMedia WHERE ml.mediaListUUID = " + "'" + mediaList.getUUID() + "'";
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(query);
+
+                    while (resultSet.next()) {
+                        String mediaTitle;
+                        String mediaUUID;
+                        String releaseDate;
+                        mediaTitle = resultSet.getString("title");
+                        mediaUUID = resultSet.getString("mediaUUID");
+                        releaseDate = resultSet.getString("releaseDate");
+                        Movie movie = new Movie(mediaTitle);
+                        movie.setUuid(mediaUUID);
+                        movie.setReleaseDate(releaseDate);
+                        mediaList.addMovie(movie);
+                    }
+                    resultSet.close();
+                    retVal.add(mediaList);
+                    return retVal;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 break;
             case MOVIE: {
                 try {
@@ -175,7 +201,6 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
         }
         return mediaList;
     }
-
 
 
     @Override

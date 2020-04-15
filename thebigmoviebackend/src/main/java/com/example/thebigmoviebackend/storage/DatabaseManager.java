@@ -49,7 +49,6 @@ public class DatabaseManager {
     /**
      * @param data user search string i.e. username
      * @return first matching user
-     * TODO switch this to use a UUID to guarantee uniqueness and match
      */
     public User getUser(String data) {
         return localDatabaseHandle.getUserByUsername(data);
