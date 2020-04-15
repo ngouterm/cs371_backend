@@ -2,11 +2,13 @@ package com.example.thebigmoviebackend.service;
 
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+@Service
 public class MixedDatabaseService implements DatabaseService {
     InternalDatabaseService internalDatabaseService = new InternalDatabaseService();
     ArrayList<DatabaseService> externalDatabases = new ArrayList<>();

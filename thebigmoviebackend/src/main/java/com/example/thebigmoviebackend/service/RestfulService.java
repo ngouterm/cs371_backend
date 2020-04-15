@@ -68,7 +68,7 @@ public class RestfulService {
      * @param title Title of movie to search the database for
      * @return ArrayList of Movie of the movies that contain the search sting in their title
      */
-    @GetMapping("/movie")
+    @GetMapping(value = "/movie", params = {"title"})
     public ArrayList<Movie> searchMovie(@RequestParam String title) {
         return mixedDatabaseService.getMovieResults(title);
     }
@@ -94,11 +94,11 @@ public class RestfulService {
 
     /**
      * @param title Title of movie to search the databases for
-     * @param dbs Databases to search
+     * @param dbs   Databases to search
      * @return HashMap of the database service and the movie
      * To keep track of what database service the movie was found
      */
-    @GetMapping("/movie")
+    @GetMapping(value = "/movie", params = {"title", "dbs"})
     public HashMap<DatabaseService, ArrayList<Movie>> searchMovie(@RequestParam String title, @RequestParam String dbs) {
         return mixedDatabaseService.getMovieResults(title, databaseServices(dbs));
     }
@@ -125,7 +125,7 @@ public class RestfulService {
      * @param userid userid who lists you want
      * @return ArrayList of MediaLists for the User passed across application databases
      */
-    @GetMapping("/user/{userid}/list")
+    @GetMapping(value = "/user/{userid}/list", params = {"userid"})
     public ArrayList<MediaList> userList(@PathVariable String userid) {
         User user = userService.getUser(userid);
         return userService.getMediaLists(user);
@@ -133,10 +133,10 @@ public class RestfulService {
 
     /**
      * @param userid userid who lists you want
-     * @param name name of the list you wish to get
+     * @param name   name of the list you wish to get
      * @return Medialist requested
      */
-    @GetMapping("/user/{userid}/list")
+    @GetMapping(value = "/user/{userid}/list", params = {"userid", "name"})
     public MediaList userList(@PathVariable String userid, @RequestParam String name) {
         User user = userService.getUser(userid);
         return userService.getMediaList(user, name);
