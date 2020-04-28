@@ -1,8 +1,10 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.Comment;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
+import org.checkerframework.checker.units.qual.C;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -307,6 +309,100 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
             System.out.println(e.toString());
         }
 
+    }
+
+    @Override
+    public void saveComment(Comment comment) {
+        Connection connection = connect();
+
+        String query = "INSERT INTO COMMENTS (commentUUID, userUUID, mediaUUID, comment)"
+                + " VALUES (?, ?,?, ?)";
+
+        // create the mysql insert preparedstatement
+        try {
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            preparedStmt.setString(1, comment.getUuid());
+            preparedStmt.setString(2, comment.getUserUUID());
+            preparedStmt.setString(3, comment.getMovieUUID());
+            preparedStmt.setString(4, comment.getComment());
+
+            // execute the preparedstatement
+            preparedStmt.execute();
+
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+
+    }
+    @Override
+    public ArrayList<Comment> getUserComments(User user) {
+        ArrayList<Comment> comments = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM COMMENTS userUUID = ?");
+            statement.setString(1, user.getUuid());
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+            while (resultSet.next()) {
+                String commentUUID = resultSet.getString("commentUUID");
+                String userUUID = resultSet.getString("userUUID");
+                String movieUUID = resultSet.getString("movieUUID");
+                String commentText = resultSet.getString("comment");
+                Comment comment = new Comment(userUUID, movieUUID, commentText, commentUUID);
+                comments.add(comment);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return comments;
+    }
+
+    @Override
+    public ArrayList<Comment> getMovieComments(Movie movie) {
+        ArrayList<Comment> comments = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM COMMENTS movieUUID = ?");
+            statement.setString(1, movie.getUuid());
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+            while (resultSet.next()) {
+                String commentUUID = resultSet.getString("commentUUID");
+                String userUUID = resultSet.getString("userUUID");
+                String movieUUID = resultSet.getString("movieUUID");
+                String commentText = resultSet.getString("comment");
+                Comment comment = new Comment(userUUID, movieUUID, commentText, commentUUID);
+                comments.add(comment);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return comments;
+    }
+    @Override
+    public ArrayList<Comment> getCommentByUUID(String commentUUID) {
+        ArrayList<Comment> comments = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM COMMENTS commentUUID = ?");
+            statement.setString(1, commentUUID);
+            ResultSet resultSet = statement.executeQuery();
+            statement.clearParameters();
+            while (resultSet.next()) {
+//                String commentUUID = resultSet.getString("commentUUID");
+                String userUUID = resultSet.getString("userUUID");
+                String movieUUID = resultSet.getString("movieUUID");
+                String commentText = resultSet.getString("comment");
+                Comment comment = new Comment(userUUID, movieUUID, commentText, commentUUID);
+                comments.add(comment);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return comments;
     }
 
     @Override
