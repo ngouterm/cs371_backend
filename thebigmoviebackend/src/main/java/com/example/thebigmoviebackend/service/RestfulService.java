@@ -1,8 +1,10 @@
 package com.example.thebigmoviebackend.service;
 
+import com.example.thebigmoviebackend.model.Comment;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
+import com.example.thebigmoviebackend.storage.DatabaseManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.HashMap;
 public class RestfulService {
     UserService userService = new UserService();
     MixedDatabaseService mixedDatabaseService = new MixedDatabaseService();
+    DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     /**
      * @return All users in the application database
@@ -130,6 +133,7 @@ public class RestfulService {
 
     /**
      * Creates a list of movies
+     *
      * @param list list to save
      * @return whether the list was created
      */
@@ -162,8 +166,9 @@ public class RestfulService {
 
     /**
      * Deletes a medialist
+     *
      * @param mediaList list to delete
-     * @param userid user auth for the medialist
+     * @param userid    user auth for the medialist
      * @return whether the list was deleted.
      */
     @DeleteMapping("/list")
@@ -174,5 +179,21 @@ public class RestfulService {
             return true;
         }
         return false;
+    }
+
+    @GetMapping(value = "/comment", params = {"userid"})
+    public ArrayList<Comment> userComments(@RequestParam String userid) {
+        return databaseManager.getUserComments(userService.getUser(userid));
+    }
+
+    @GetMapping(value = "/comment", params = {"movieid"})
+    public ArrayList<Comment> movieComments(@RequestParam String movieid) {
+        return databaseManager.getMovieComments(databaseManager.getMovieByUUID(movieid));
+    }
+
+    @PostMapping(value = "/comment")
+    public boolean addComment(Comment comment) {
+        databaseManager.saveComment(comment);
+        return true;
     }
 }

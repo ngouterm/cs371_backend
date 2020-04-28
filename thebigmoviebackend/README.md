@@ -101,11 +101,17 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 `/movie/id/` Get a specific movie from the internal db (used for reference with lists)
 
+`/comment?movieid=[somemovieid]` Get all comments for a movie
+
+`/comment?userid=[someuserid]` Get all comments for a user
+
 ### POST requests
 
 `/user` Create user
 
 `/list` Create list
+
+`/comment` Create comment
 
 ### DELETE requests
 
