@@ -69,8 +69,9 @@
         <dependency>
             <groupId>info.movito</groupId>
             <artifactId>themoviedbapi</artifactId>
-            <version>1.10</version>
+            <version>1.9</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
