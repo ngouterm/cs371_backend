@@ -115,8 +115,25 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
                     statement.clearParameters();
 
                     while (resultSet.next()) {
-                        Movie movie = new Movie(resultSet.getString("title"));
-                        movie.setUuid(resultSet.getString("mediaUUID"));
+                        String mediaTitle = resultSet.getString("title");
+                        String mediaUUID = resultSet.getString("mediaUUID");
+                        String releaseDate = resultSet.getString("releaseDate");
+                        double voteAverage = resultSet.getDouble("voteAverage");
+                        double popularity =resultSet.getDouble("popularity");
+                        int voteCount =resultSet.getInt("voteCount");
+                        Boolean video = (resultSet.getShort("video") != 0);
+                        String posterPath =  resultSet.getString("posterPath");
+                        int remoteId =resultSet.getInt("remoteId");
+                        Boolean adult =(resultSet.getShort("adult") != 0);
+                        String backgroundPath = resultSet.getString("backgroundPath");
+                        String originalLanguage = resultSet.getString("originalLanguage");
+                        String originalTitle = resultSet.getString("originalTitle");
+                        int genreIds =resultSet.getInt("genreIds");
+                        String overview = resultSet.getString("overview");
+
+
+                        Movie movie = new Movie( popularity,  voteCount,  video,  posterPath,  remoteId,  adult,  backgroundPath,  originalLanguage,  originalTitle, new ArrayList<Integer>(genreIds), mediaTitle,  voteAverage,  overview,  releaseDate,  mediaUUID);
+
                         retVal.add(movie);
                     }
                     return retVal;
@@ -186,15 +203,24 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                String mediaTitle;
-                String mediaUUID;
-                String releaseDate;
-                mediaTitle = resultSet.getString("title");
-                mediaUUID = resultSet.getString("mediaUUID");
-                releaseDate = resultSet.getString("releaseDate");
-                Movie movie = new Movie(mediaTitle);
-                movie.setUuid(mediaUUID);
-                movie.setReleaseDate(releaseDate);
+                String mediaTitle = resultSet.getString("title");
+                String mediaUUID = resultSet.getString("mediaUUID");
+                String releaseDate = resultSet.getString("releaseDate");
+                double voteAverage = resultSet.getDouble("voteAverage");
+                double popularity =resultSet.getDouble("popularity");
+                int voteCount =resultSet.getInt("voteCount");
+                Boolean video = (resultSet.getShort("video") != 0);
+                String posterPath =  resultSet.getString("posterPath");
+                int remoteId =resultSet.getInt("remoteId");
+                Boolean adult =(resultSet.getShort("adult") != 0);
+                String backgroundPath = resultSet.getString("backgroundPath");
+                String originalLanguage = resultSet.getString("originalLanguage");
+                String originalTitle = resultSet.getString("originalTitle");
+                int genreIds =resultSet.getInt("genreIds");
+                String overview = resultSet.getString("overview");
+
+
+                Movie movie = new Movie( popularity,  voteCount,  video,  posterPath,  remoteId,  adult,  backgroundPath,  originalLanguage,  originalTitle, new ArrayList<Integer>(genreIds), mediaTitle,  voteAverage,  overview,  releaseDate,  mediaUUID);
                 mediaList.addMovie(movie);
             }
             resultSet.close();
@@ -547,15 +573,24 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
-                String mediaTitle;
-                String mediaUUID;
-                String releaseDate;
-                mediaTitle = resultSet.getString("title");
-                mediaUUID = resultSet.getString("mediaUUID");
-                releaseDate = resultSet.getString("releaseDate");
-                Movie movie = new Movie(mediaTitle);
-                movie.setUuid(mediaUUID);
-                movie.setReleaseDate(releaseDate);
+                String mediaTitle = resultSet.getString("title");
+                String mediaUUID = resultSet.getString("mediaUUID");
+                String releaseDate = resultSet.getString("releaseDate");
+                double voteAverage = resultSet.getDouble("voteAverage");
+                double popularity =resultSet.getDouble("popularity");
+                int voteCount =resultSet.getInt("voteCount");
+                Boolean video = (resultSet.getShort("video") != 0);
+                String posterPath =  resultSet.getString("posterPath");
+                int remoteId =resultSet.getInt("remoteId");
+                Boolean adult =(resultSet.getShort("adult") != 0);
+                String backgroundPath = resultSet.getString("backgroundPath");
+                String originalLanguage = resultSet.getString("originalLanguage");
+                String originalTitle = resultSet.getString("originalTitle");
+                int genreIds =resultSet.getInt("genreIds");
+                String overview = resultSet.getString("overview");
+
+
+                Movie movie = new Movie( popularity,  voteCount,  video,  posterPath,  remoteId,  adult,  backgroundPath,  originalLanguage,  originalTitle, new ArrayList<Integer>(genreIds), mediaTitle,  voteAverage,  overview,  releaseDate,  mediaUUID);
                 allMedia.add(movie);
             }
             resultSet.close();
@@ -594,15 +629,23 @@ final class RDSDatabaseHandle implements ApplicationDatabaseHandle {
                 ResultSet resultSet = statement.executeQuery(query);
 
                 while (resultSet.next()) {
-                    String mediaTitle;
-                    String mediaUUID;
-                    String releaseDate;
-                    mediaTitle = resultSet.getString("title");
-                    mediaUUID = resultSet.getString("mediaUUID");
-                    releaseDate = resultSet.getString("releaseDate");
-                    Movie movie = new Movie(mediaTitle);
-                    movie.setUuid(mediaUUID);
-                    movie.setReleaseDate(releaseDate);
+                    String mediaTitle = resultSet.getString("title");
+                    String mediaUUID = resultSet.getString("mediaUUID");
+                    String releaseDate = resultSet.getString("releaseDate");
+                    double voteAverage = resultSet.getDouble("voteAverage");
+                    double popularity =resultSet.getDouble("popularity");
+                    int voteCount =resultSet.getInt("voteCount");
+                    Boolean video = (resultSet.getShort("video") != 0);
+                    String posterPath =  resultSet.getString("posterPath");
+                    int remoteId =resultSet.getInt("remoteId");
+                    Boolean adult =(resultSet.getShort("adult") != 0);
+                    String backgroundPath = resultSet.getString("backgroundPath");
+                    String originalLanguage = resultSet.getString("originalLanguage");
+                    String originalTitle = resultSet.getString("originalTitle");
+                    int genreIds =resultSet.getInt("genreIds");
+                    String overview = resultSet.getString("overview");
+                    Movie movie = new Movie( popularity,  voteCount,  video,  posterPath,  remoteId,  adult,  backgroundPath,  originalLanguage,  originalTitle, new ArrayList<Integer>(genreIds), mediaTitle,  voteAverage,  overview,  releaseDate,  mediaUUID);
+
                     mediaList.addMovie(movie);
                 }
                 resultSet.close();
