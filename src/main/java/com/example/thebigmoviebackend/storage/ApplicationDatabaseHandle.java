@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.Comment;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
@@ -71,6 +72,14 @@ interface ApplicationDatabaseHandle {
      * return an List of all the lists for the passed user
      */
     List<MediaList> getLists(User user);
+
+    void saveComment(Comment comment);
+
+    ArrayList<Comment> getUserComments(User user);
+
+    ArrayList<Comment> getMovieComments(Movie movie);
+
+    ArrayList<Comment> getCommentByUUID(String commentUUID);
 
     /**
      * @param mediaList MediaList to save
