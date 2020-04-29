@@ -1,5 +1,6 @@
 package com.example.thebigmoviebackend.storage;
 
+import com.example.thebigmoviebackend.model.Comment;
 import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
@@ -141,5 +142,21 @@ public class DatabaseManager {
     public MediaList getMediaListByUUID(String uuid){
         MediaList mediaList = localDatabaseHandle.getMediaListByUUID(uuid);
         return mediaList;
+    }
+
+    public void saveComment(Comment comment){
+        localDatabaseHandle.saveComment(comment);
+    }
+
+    public ArrayList<Comment> getUserComments(User user){
+        return localDatabaseHandle.getUserComments(user);
+    }
+
+    public ArrayList<Comment> getMovieComments(Movie movie){
+        return localDatabaseHandle.getMovieComments(movie);
+    }
+
+    public ArrayList<Comment> getCommentByUUID(String uuid){
+        return localDatabaseHandle.getCommentByUUID(uuid);
     }
 }
