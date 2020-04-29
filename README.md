@@ -77,6 +77,8 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 ## REST API
 
+Available at: https://cs371-backend.herokuapp.com/
+
 ### GET requests
 
 `/user` Get all users
