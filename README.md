@@ -109,6 +109,10 @@ Available at: https://cs371-backend.herokuapp.com/
 
 ### POST requests
 
+Requests fail silently. Client side is responsible for checking values. See model dir for valid constructors. 
+UUIDs are automatically set; use the appropriate constructor without the UUID. Expects data in JSON form in the request
+body.
+
 `/user` Create user
 
 `/list` Create list
@@ -116,5 +120,7 @@ Available at: https://cs371-backend.herokuapp.com/
 `/comment` Create comment
 
 ### DELETE requests
+
+Expects the data for the list in the request body in JSON form.
 
 `/list?userid=[useridforlist]` Delete list. User must be the user for the corresponding list.

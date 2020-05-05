@@ -24,6 +24,13 @@ public class MediaList {
         this.uuid = UUID.randomUUID().toString();
     }
 
+    public MediaList(User user, String name, ArrayList<Movie> movies) {
+        this.user = user;
+        this.name = name;
+        this.movies = movies;
+        this.uuid = UUID.randomUUID().toString();
+    }
+
     public User getUser() {
         return user;
     }
