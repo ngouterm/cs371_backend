@@ -77,6 +77,8 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 ## REST API
 
+Available at: https://cs371-backend.herokuapp.com/
+
 ### GET requests
 
 `/user` Get all users
@@ -89,7 +91,7 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 `/user/id/list?name=[somelistname]` Get a specific list by a user by name
 
-`/list` Get all lists
+`/list/` Get all lists
 
 `/list/id/` Get a specific list
 
@@ -107,6 +109,10 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 
 ### POST requests
 
+Requests fail silently. Client side is responsible for checking values. See model dir for valid constructors. 
+UUIDs are automatically set; use the appropriate constructor without the UUID. Expects data in JSON form in the request
+body.
+
 `/user` Create user
 
 `/list` Create list
@@ -114,5 +120,7 @@ Strings with spaces in them must be surrounded with quotes or they will be inter
 `/comment` Create comment
 
 ### DELETE requests
+
+Expects the data for the list in the request body in JSON form.
 
 `/list?userid=[useridforlist]` Delete list. User must be the user for the corresponding list.

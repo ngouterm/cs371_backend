@@ -5,6 +5,9 @@ import com.example.thebigmoviebackend.model.MediaList;
 import com.example.thebigmoviebackend.model.Movie;
 import com.example.thebigmoviebackend.model.User;
 import com.example.thebigmoviebackend.storage.DatabaseManager;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +35,11 @@ public class RestfulService {
      * @param user user to create
      * @return whether the user was created
      */
-    @PostMapping("/user/")
-    public boolean createUser(User user) {
-        return userService.createUser(user);
+    @PostMapping(value = "/user/")
+    public ResponseEntity<String> createUser(@RequestBody User user) {
+        user = new User(user.getUsername());
+        userService.createUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**
@@ -138,9 +143,11 @@ public class RestfulService {
      * @return whether the list was created
      */
     @PostMapping("list/")
-    public boolean createList(MediaList list) {
+    public ResponseEntity<String> createList(@RequestBody MediaList list) {
+
+        list = new MediaList(list.getUser(), list.getName(), list.getMovies());
         userService.saveMediaList(list);
-        return true;
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**
@@ -172,7 +179,7 @@ public class RestfulService {
      * @return whether the list was deleted.
      */
     @DeleteMapping("/list")
-    public boolean deleteList(MediaList mediaList, @RequestParam String userid) {
+    public boolean deleteList(@RequestBody MediaList mediaList, @RequestParam String userid) {
         User user = userService.getUser(userid);
         if (mediaList.getUser().equals(user)) {
             userService.deleteMediaList(user, mediaList);
@@ -192,8 +199,9 @@ public class RestfulService {
     }
 
     @PostMapping(value = "/comment")
-    public boolean addComment(Comment comment) {
+    public ResponseEntity<String> createComment(@RequestBody Comment comment) {
+        comment = new Comment(comment.getUserUUID(), comment.getMovieUUID(), comment.getComment());
         databaseManager.saveComment(comment);
-        return true;
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
