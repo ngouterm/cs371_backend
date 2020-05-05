@@ -91,7 +91,7 @@ Available at: https://cs371-backend.herokuapp.com/
 
 `/user/id/list?name=[somelistname]` Get a specific list by a user by name
 
-`/list` Get all lists
+`/list/` Get all lists
 
 `/list/id/` Get a specific list
 
