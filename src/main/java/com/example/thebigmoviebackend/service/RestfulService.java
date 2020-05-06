@@ -154,7 +154,7 @@ public class RestfulService {
      * @param userid userid who lists you want
      * @return ArrayList of MediaLists for the User passed across application databases
      */
-    @GetMapping(value = "/user/{userid}/list", params = {"userid"})
+    @GetMapping(value = "/user/{userid}/list")
     public ArrayList<MediaList> userList(@PathVariable String userid) {
         User user = userService.getUser(userid);
         return userService.getMediaLists(user);
@@ -165,7 +165,7 @@ public class RestfulService {
      * @param name   name of the list you wish to get
      * @return Medialist requested
      */
-    @GetMapping(value = "/user/{userid}/list", params = {"userid", "name"})
+    @GetMapping(value = "/user/{userid}/list", params = {"name"})
     public MediaList userList(@PathVariable String userid, @RequestParam String name) {
         User user = userService.getUser(userid);
         return userService.getMediaList(user, name);
